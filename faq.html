@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<script>
+  (function(){
+    var saved = localStorage.getItem('devora-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAQ — Devora</title>
+<meta name="description" content="Answers to common questions about pricing, timelines, mobile apps, hosting, and maintenance at Devora.">
+<link rel="canonical" href="https://devora.dev/faq.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="FAQ — Devora">
+<meta property="og:description" content="Answers to common questions about pricing, timelines, mobile apps, hosting, and maintenance.">
+<meta property="og:image" content="assets/logo-full.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="FAQ — Devora">
+<meta name="twitter:description" content="Answers to common questions about pricing, timelines, mobile apps, hosting, and maintenance.">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/variables.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/hero.css">
+<link rel="stylesheet" href="css/pages.css">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<header id="siteHeader">
+  <div class="wrap nav-row">
+    <a href="index.html" class="brand">
+      <span class="brand-mark" aria-hidden="true"><img src="assets/logo-mark.png" alt="" width="24" height="24"></span>
+      <span class="brand-word">Devora</span>
+    </a>
+    <nav class="links" aria-label="Primary">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="services.html">Services</a>
+      <a href="portfolio.html">Portfolio</a>
+      <a href="process.html">Process</a>
+      <a href="faq.html">FAQ</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <div class="nav-right">
+      <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to light theme">
+        <svg class="moon" viewBox="0 0 24 24" fill="none"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" stroke="#b8baff" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        <svg class="sun" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.2" stroke="#6666ff" stroke-width="1.6"/><path d="M12 2.5v3M12 18.5v3M21.5 12h-3M5.5 12h-3M18.5 5.5l-2.1 2.1M7.6 16.4l-2.1 2.1M18.5 18.5l-2.1-2.1M7.6 7.6 5.5 5.5" stroke="#6666ff" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+      <div class="nav-auth" id="navAuth"><a href="login.html" class="nav-account-link">Log in</a></div>
+      <a href="contact.html" class="nav-cta">Start a project</a>
+      <button type="button" class="menu-btn" id="menuBtn" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+  <nav class="mobile-nav" id="mobileNav" aria-label="Mobile">
+    <button type="button" class="mobile-nav-close" id="mobileNavClose" aria-label="Close menu"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="services.html">Services</a>
+    <a href="portfolio.html">Portfolio</a>
+    <a href="process.html">Process</a>
+    <a href="faq.html">FAQ</a>
+    <a href="contact.html">Contact</a>
+    <div id="mobileAuthLinks"><a href="login.html">Log in</a><a href="signup.html">Sign up</a></div>
+    <a href="contact.html" class="nav-cta">Start a project</a>
+  </nav>
+</header>
+
+<main>
+
+  <section class="page-header">
+    <div class="hero-glow" aria-hidden="true"></div>
+    <div class="wrap">
+      <span class="eyebrow"><span class="dot" aria-hidden="true"></span>Frequently asked</span>
+      <h1>Questions, <span class="accent">answered</span>.</h1>
+      <p class="lede">The things clients usually ask before their first order. Don't see yours — just ask directly.</p>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="wrap" style="max-width:820px;">
+      <div class="faq-list">
+        <div class="faq-item reveal">
+          <button type="button" class="faq-question">
+            <span>How long does a project take?</span>
+            <span class="faq-icon" aria-hidden="true"></span>
+          </button>
+          <div class="faq-answer"><p>Most single websites take 2–4 weeks from approved proposal to launch; mobile apps typically run 4–10 weeks depending on scope. You'll get a specific timeline in your quote before any work starts.</p></div>
+        </div>
+        <div class="faq-item reveal">
+          <button type="button" class="faq-question">
+            <span>How much does a website cost?</span>
+            <span class="faq-icon" aria-hidden="true"></span>
+          </button>
+          <div class="faq-answer"><p>It depends on scope — a simple marketing site starts lower than a full web app with a custom backend. Submit a brief through the order form and you'll get a fixed price before anything begins.</p></div>
+        </div>
+        <div class="faq-item reveal">
+          <button type="button" class="faq-question">
+            <span>Do you develop mobile apps?</span>
+            <span class="faq-icon" aria-hidden="true"></span>
+          </button>
+          <div class="faq-answer"><p>Yes — native-feeling iOS and Android apps built with Flutter, from first wireframe through to a store-ready release build.</p></div>
+        </div>
+        <div class="faq-item reveal">
+          <button type="button" class="faq-question">
+            <span>Do you redesign existing websites?</span>
+            <span class="faq-icon" aria-hidden="true"></span>
+          </button>
+          <div class="faq-answer"><p>Yes. Whether it's a full rebuild or targeted improvements to an existing site, I can work with what you already have or start fresh.</p></div>
+        </div>
+        <div class="faq-item reveal">
+          <button type="button" class="faq-question">
+            <span>Do you provide hosting?</span>
+            <span class="faq-icon" aria-hidden="true"></span>
+          </button>
+          <div class="faq-answer"><p>I can deploy to your preferred host (Netlify, Vercel, Cloudflare Pages, or your own server) and hand over full access, or manage it for you on an ongoing basis if you'd rather not deal with it.</p></div>
+        </div>
+        <div class="faq-item reveal">
+          <button type="button" class="faq-question">
+            <span>Do you provide maintenance?</span>
+            <span class="faq-icon" aria-hidden="true"></span>
+          </button>
+          <div class="faq-answer"><p>Yes — ongoing maintenance, bug fixes, and feature additions are available after launch, billed hourly or as a fixed monthly retainer.</p></div>
+        </div>
+        <div class="faq-item reveal">
+          <button type="button" class="faq-question">
+            <span>Do I need an account to place an order?</span>
+            <span class="faq-icon" aria-hidden="true"></span>
+          </button>
+          <div class="faq-answer"><p>Yes — a free account keeps your brief and any follow-up tied to you, so nothing gets lost. Creating one takes under a minute.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-banner">
+    <div class="wrap">
+      <div class="tilt-card cta-banner-inner reveal">
+        <div>
+          <span class="kicker">Still have questions?</span>
+          <h2>Let's talk it through.</h2>
+          <p>Send a message or place an order brief and I'll cover anything the FAQ didn't.</p>
+        </div>
+        <a href="contact.html" class="btn-primary">Get in touch →</a>
+      </div>
+    </div>
+  </section>
+
+
+</main>
+
+<div class="brand-stripe" aria-hidden="true"></div>
+<footer>
+  <div class="wrap">
+    <div class="footer-grid footer-grid-4">
+      <div class="footer-brand">
+        <a href="index.html" class="brand">
+          <span class="brand-mark" aria-hidden="true"><img src="assets/logo-mark.png" alt="" width="24" height="24"></span>
+          <span class="brand-word">Devora</span>
+        </a>
+        <p>Freelance studio building web and mobile products, from first wireframe to store-ready release.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Quick links</h4>
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="services.html">Services</a>
+        <a href="portfolio.html">Portfolio</a>
+        <a href="process.html">Process</a>
+        <a href="faq.html">FAQ</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <a href="services.html">Websites</a>
+        <a href="services.html">Mobile apps</a>
+        <a href="services.html">Product &amp; API design</a>
+        <a href="contact.html">Maintenance</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <a href="mailto:devora.inbox@gmail.com">devora.inbox@gmail.com</a>
+        <a href="https://www.instagram.com/dev_oratech" target="_blank" rel="noopener">@dev_oratech</a>
+      </div>
+    </div>
+    <div class="footer-row footer-row-expanded">
+      <div class="footer-social" aria-label="Social media">
+        <a href="https://www.instagram.com/dev_oratech" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.6"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor"/></svg>
+        </a>
+        <a href="mailto:devora.inbox@gmail.com" aria-label="Email">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5" stroke="currentColor" stroke-width="1.6"/><path d="m3 6 9 7 9-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </a>
+      </div>
+      <span class="brand-word">Devora</span>
+      <p class="fine">© <span id="year"></span> Devora. Development that <span class="accent">speaks</span> for itself.</p>
+      <div class="footer-legal">
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="js/nav.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/reveal.js"></script>
+<script src="js/tilt.js"></script>
+<script type="module" src="js/auth.js"></script>
+<script src="js/faq.js"></script>
+
+</body>
+</html>

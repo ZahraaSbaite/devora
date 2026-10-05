@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <style>
+.reveal, .reveal-scale {
+  opacity: 1 !important;
+  transform: none !important;
+}</style>
+<script>
+  (function(){
+    var saved = localStorage.getItem('devora-theme');
+    var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Devora — Development that speaks for itself</title>
+<meta name="description" content="Devora is a freelance studio building web and mobile apps. Development that speaks for itself.">
+<link rel="canonical" href="https://devora.dev/index.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Devora — Development that speaks for itself">
+<meta property="og:description" content="Devora is a freelance studio building web and mobile apps. Development that speaks for itself.">
+<meta property="og:image" content="assets/logo-full.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Devora — Development that speaks for itself">
+<meta name="twitter:description" content="Devora is a freelance studio building web and mobile apps. Development that speaks for itself.">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/variables.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/hero.css">
+<link rel="stylesheet" href="css/pages.css">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<header id="siteHeader">
+  <div class="wrap nav-row">
+    <a href="index.html" class="brand">
+      <span class="brand-mark" aria-hidden="true"><img src="assets/logo-mark.png" alt="" width="24" height="24"></span>
+      <span class="brand-word">Devora</span>
+    </a>
+    <nav class="links" aria-label="Primary">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="services.html">Services</a>
+      <a href="portfolio.html">Portfolio</a>
+      <a href="process.html">Process</a>
+      <a href="faq.html">FAQ</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <div class="nav-right">
+      <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to light theme">
+        <svg class="moon" viewBox="0 0 24 24" fill="none"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" stroke="#b8baff" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        <svg class="sun" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.2" stroke="#6666ff" stroke-width="1.6"/><path d="M12 2.5v3M12 18.5v3M21.5 12h-3M5.5 12h-3M18.5 5.5l-2.1 2.1M7.6 16.4l-2.1 2.1M18.5 18.5l-2.1-2.1M7.6 7.6 5.5 5.5" stroke="#6666ff" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+      <div class="nav-auth" id="navAuth"><a href="login.html" class="nav-account-link">Log in</a></div>
+      <a href="contact.html" class="nav-cta">Start a project</a>
+      <button type="button" class="menu-btn" id="menuBtn" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+  <nav class="mobile-nav" id="mobileNav" aria-label="Mobile">
+    <button type="button" class="mobile-nav-close" id="mobileNavClose" aria-label="Close menu"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="services.html">Services</a>
+    <a href="portfolio.html">Portfolio</a>
+    <a href="process.html">Process</a>
+    <a href="faq.html">FAQ</a>
+    <a href="contact.html">Contact</a>
+    <div id="mobileAuthLinks"><a href="login.html">Log in</a><a href="signup.html">Sign up</a></div>
+    <a href="contact.html" class="nav-cta">Start a project</a>
+  </nav>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="hero-glow" aria-hidden="true"></div>
+    <div class="wrap hero-row">
+      <div>
+        <span class="eyebrow"><span class="dot" aria-hidden="true"></span>Freelance web &amp; mobile development</span>
+        <h1>Development<br>that <span class="accent">speaks</span> for itself.</h1>
+        <p class="lede">Devora — <em>Dev</em>, for development, and <em>Ora</em>, Latin for speak. We design and build web and mobile products, then let the work do the talking.</p>
+        <div class="hero-ctas">
+          <a href="contact.html" class="btn-primary">Place an order →</a>
+          <a href="contact.html#contact" class="btn-secondary">Get in touch</a>
+        </div>
+      </div>
+      <div class="hero-stage" id="heroStage" aria-hidden="true">
+        <div class="hero-stage-ring"></div>
+        <div class="code-window">
+          <div class="code-window-bar">
+            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+            <span class="code-window-title">devora.build</span>
+          </div>
+          <div class="code-window-body">
+            <pre><code id="codeTyper"></code></pre>
+          </div>
+        </div>
+        <div class="hero-stage-tag">live build preview</div>
+      </div>
+    </div>
+    <div class="wrap hero-stats reveal">
+      <div class="stat"><b>1:1</b><span>Direct with the developer</span></div>
+      <div class="stat"><b>Fixed</b><span>Price agreed before work begins</span></div>
+      <div class="stat"><b>Web + iOS/Android</b><span>One studio, both platforms</span></div>
+      <div class="stat"><b>Async</b><span>Updates by email, no mandatory calls</span></div>
+    </div>
+  </section>
+
+  <section id="services">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div>
+          <span class="kicker">What I build</span>
+          <h2>Two platforms, one build quality.</h2>
+        </div>
+        <p>Every engagement is scoped, built, and shipped by one developer — no handoffs, no diluted ownership.</p>
+      </div>
+
+      <div class="services-grid">
+        <div class="service-card tilt-card reveal">
+          <div class="service-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="1" y="3" width="18" height="13" rx="2" stroke="#b8baff" stroke-width="1.6"/><path d="M6 19h8" stroke="#b8baff" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </div>
+          <h3>Websites</h3>
+          <p>Marketing sites, portfolios, dashboards and full web apps — responsive, fast, and built to convert.</p>
+        </div>
+        <div class="service-card tilt-card reveal">
+          <div class="service-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="5" y="1" width="10" height="18" rx="2.5" stroke="#c9e8ff" stroke-width="1.6"/><circle cx="10" cy="15.5" r="0.9" fill="#c9e8ff"/></svg>
+          </div>
+          <h3>Mobile apps</h3>
+          <p>Native-feeling iOS and Android apps, from first wireframe to a store-ready release build.</p>
+        </div>
+        <div class="service-card tilt-card reveal">
+          <div class="service-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 1v18M1 10h18" stroke="#b9f0d7" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="10" r="7" stroke="#b9f0d7" stroke-width="1.6"/></svg>
+          </div>
+          <h3>Product &amp; API design</h3>
+          <p>Backends, integrations and data models that keep the front end honest and the app easy to grow.</p>
+        </div>
+        <div class="service-card tilt-card reveal">
+          <div class="service-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3.2" stroke="#b9f0d7" stroke-width="1.6"/><path d="M4 18c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="#b9f0d7" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="7" r="0.9" fill="#b9f0d7"/></svg>
+          </div>
+          <h3>AI integrations</h3>
+          <p>We work with AI — chatbots and AI-powered helpers built right into your website or app.</p>
+        </div>
+      </div>
+      <p class="reveal" style="margin-top:28px;"><a href="services.html" class="btn-secondary">See all services →</a></p>
+    </div>
+  </section>
+
+  <section id="why-choose">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div>
+          <span class="kicker">Why Devora</span>
+          <h2>Reasons clients come back.</h2>
+        </div>
+        <p>No agency layers, no account managers — just build quality you can rely on.</p>
+      </div>
+      <div class="why-grid">
+        <div class="why-card tilt-card reveal-scale" style="--i:0">
+          <div class="why-icon" aria-hidden="true">✓</div>
+          <h3>Custom solutions</h3>
+          <p>Every build is scoped to your product, not squeezed into a template.</p>
+        </div>
+        <div class="why-card tilt-card reveal-scale" style="--i:1">
+          <div class="why-icon" aria-hidden="true">✓</div>
+          <h3>Responsive design</h3>
+          <p>Looks and works right on phones, tablets, and desktops alike.</p>
+        </div>
+        <div class="why-card tilt-card reveal-scale" style="--i:2">
+          <div class="why-icon" aria-hidden="true">✓</div>
+          <h3>Clean, scalable code</h3>
+          <p>Built to be extended later, by me or anyone else.</p>
+        </div>
+        <div class="why-card tilt-card reveal-scale" style="--i:3">
+          <div class="why-icon" aria-hidden="true">✓</div>
+          <h3>Fast delivery</h3>
+          <p>Fixed timelines, agreed upfront, kept to.</p>
+        </div>
+        <div class="why-card tilt-card reveal-scale" style="--i:4">
+          <div class="why-icon" aria-hidden="true">✓</div>
+          <h3>Mobile &amp; web expertise</h3>
+          <p>One studio for both platforms — no handoffs between teams.</p>
+        </div>
+        <div class="why-card tilt-card reveal-scale" style="--i:5">
+          <div class="why-icon" aria-hidden="true">✓</div>
+          <h3>SEO-friendly builds</h3>
+          <p>Semantic markup and clean performance from day one.</p>
+        </div>
+        <div class="why-card tilt-card reveal-scale" style="--i:6">
+          <div class="why-icon" aria-hidden="true">✓</div>
+          <h3>Modern UI/UX</h3>
+          <p>Interfaces that feel current, not dated on arrival.</p>
+        </div>
+        <div class="why-card tilt-card reveal-scale" style="--i:7">
+          <div class="why-icon" aria-hidden="true">✓</div>
+          <h3>Long-term support</h3>
+          <p>Maintenance and improvements available well after launch.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="portfolio-teaser">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div>
+          <span class="kicker">Selected work</span>
+          <h2>A few recent builds.</h2>
+        </div>
+        <p><a href="portfolio.html" class="btn-secondary">View full portfolio →</a></p>
+      </div>
+      <div class="portfolio-grid" id="homePortfolioGrid"></div>
+    </div>
+  </section>
+
+  <section class="cta-banner">
+    <div class="wrap">
+      <div class="tilt-card cta-banner-inner reveal">
+        <div>
+          <span class="kicker">Ready to transform your idea into reality?</span>
+          <h2>Let's build something amazing together.</h2>
+        </div>
+        <a href="contact.html" class="btn-primary">Start your project →</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="tech-stack">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div>
+          <span class="kicker">Our technology stack</span>
+          <h2>Tools chosen for the job, not the trend.</h2>
+        </div>
+        <p>A focused stack that covers web, mobile, backend, and data — no unnecessary layers.</p>
+      </div>
+      <div class="tech-groups">
+        <div class="reveal">
+          <span class="tech-group-label">Frontend</span>
+          <div class="tech-grid">
+            <div class="tech-card tilt-card"><span class="tech-glyph">H</span><span class="name">HTML</span></div>
+            <div class="tech-card tilt-card"><span class="tech-glyph">C</span><span class="name">CSS</span></div>
+            <div class="tech-card tilt-card"><span class="tech-glyph">JS</span><span class="name">JavaScript</span></div>
+            <div class="tech-card tilt-card"><span class="tech-glyph">TS</span><span class="name">TypeScript</span></div>
+            <div class="tech-card tilt-card"><span class="tech-glyph">R</span><span class="name">React</span></div>
+            <div class="tech-card tilt-card"><span class="tech-glyph">N</span><span class="name">Next.js</span></div>
+          </div>
+        </div>
+        <div class="reveal">
+          <span class="tech-group-label">Backend</span>
+          <div class="tech-grid">
+            <div class="tech-card tilt-card"><span class="tech-glyph">P</span><span class="name">PHP</span></div>
+            <div class="tech-card tilt-card"><span class="tech-glyph">L</span><span class="name">Laravel</span></div>
+            <div class="tech-card tilt-card"><span class="tech-glyph">N</span><span class="name">Node.js</span></div>
+            <div class="tech-card tilt-card"><span class="tech-glyph">E</span><span class="name">Express</span></div>
+          </div>
+        </div>
+        <div class="reveal">
+          <span class="tech-group-label">Mobile</span>
+          <div class="tech-grid">
+            <div class="tech-card tilt-card"><span class="tech-glyph">F</span><span class="name">Flutter</span></div>
+          </div>
+        </div>
+        <div class="reveal">
+          <span class="tech-group-label">Database</span>
+          <div class="tech-grid">
+            <div class="tech-card tilt-card"><span class="tech-glyph">M</span><span class="name">MySQL</span></div>
+            <div class="tech-card tilt-card"><span class="tech-glyph">S</span><span class="name">Supabase</span></div>
+            <div class="tech-card tilt-card"><span class="tech-glyph">S</span><span class="name">Supabase</span></div>
+          </div>
+        </div>
+        <div class="reveal">
+          <span class="tech-group-label">Tools</span>
+          <div class="tech-grid">
+            <div class="tech-card tilt-card"><span class="tech-glyph">G</span><span class="name">Git</span></div>
+            <div class="tech-card tilt-card"><span class="tech-glyph">G</span><span class="name">GitHub</span></div>
+            <div class="tech-card tilt-card"><span class="tech-glyph">F</span><span class="name">Figma</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="process-teaser">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div>
+          <span class="kicker">How it runs</span>
+          <h2>Seven steps, start to launch.</h2>
+        </div>
+        <p><a href="process.html" class="btn-secondary">View the full process →</a></p>
+      </div>
+      <div class="strip reveal">
+        <div class="strip-item"><span class="num">01</span><span class="label">Brief — tell me what you're building</span></div>
+        <div class="strip-item"><span class="num">02</span><span class="label">Proposal — fixed price, clear timeline</span></div>
+        <div class="strip-item"><span class="num">03</span><span class="label">Build — live preview, real progress</span></div>
+        <div class="strip-item"><span class="num">04</span><span class="label">Launch — deployed, documented, handed over</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="cta">
+    <div class="wrap">
+      <div class="tilt-card reveal" style="padding:56px; display:flex; align-items:center; justify-content:space-between; gap:32px; flex-wrap:wrap;">
+        <div>
+          <span class="kicker">Ready when you are</span>
+          <h2 style="font-size:clamp(24px,3vw,34px); font-weight:600;">Tell me what you're building.</h2>
+        </div>
+        <a href="contact.html" class="btn-primary">Place an order →</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div class="brand-stripe" aria-hidden="true"></div>
+<footer>
+  <div class="wrap">
+    <div class="footer-grid footer-grid-4">
+      <div class="footer-brand">
+        <a href="index.html" class="brand">
+          <span class="brand-mark" aria-hidden="true"><img src="assets/logo-mark.png" alt="" width="24" height="24"></span>
+          <span class="brand-word">Devora</span>
+        </a>
+        <p>Freelance studio building web and mobile products, from first wireframe to store-ready release.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Quick links</h4>
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="services.html">Services</a>
+        <a href="portfolio.html">Portfolio</a>
+        <a href="process.html">Process</a>
+        <a href="faq.html">FAQ</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <a href="services.html">Websites</a>
+        <a href="services.html">Mobile apps</a>
+        <a href="services.html">Product &amp; API design</a>
+        <a href="contact.html">Maintenance</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <a href="mailto:devora.inbox@gmail.com">devora.inbox@gmail.com</a>
+        <a href="https://www.instagram.com/dev_oratech" target="_blank" rel="noopener">@dev_oratech</a>
+      </div>
+    </div>
+    <div class="footer-row footer-row-expanded">
+      <div class="footer-social" aria-label="Social media">
+        <a href="https://www.instagram.com/dev_oratech" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.6"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor"/></svg>
+        </a>
+        <a href="mailto:devora.inbox@gmail.com" aria-label="Email">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5" stroke="currentColor" stroke-width="1.6"/><path d="m3 6 9 7 9-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </a>
+      </div>
+      <span class="brand-word">Devora</span>
+      <p class="fine">© <span id="year"></span> Devora. Development that <span class="accent">speaks</span> for itself.</p>
+      <div class="footer-legal">
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="js/nav.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/reveal.js"></script>
+<script src="js/tilt.js"></script>
+<script type="module" src="js/auth.js"></script>
+<script type="module" src="js/home-projects.js"></script>
+<script src="js/code-demo.js"></script>
+<script src="js/counter.js"></script>
+<script src="js/testimonials.js"></script>
+
+</body>
+</html>
