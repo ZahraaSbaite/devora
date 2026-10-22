@@ -66,6 +66,7 @@ if(form){
 
 function friendlyError(err){
   const msg = (err && err.message || '').toLowerCase();
+  if(msg.includes('failed to fetch') || msg.includes('fetch failed') || msg.includes('network') || (err && err.name === 'AuthRetryableFetchError')) return "Can't reach the account server right now — please try again in a few minutes.";
   if(msg.includes('already registered') || msg.includes('already exists')) return 'An account with that email already exists — try logging in instead.';
   if(msg.includes('password')) return 'Please choose a stronger password.';
   if(msg.includes('email')) return 'That email address doesn\'t look right.';

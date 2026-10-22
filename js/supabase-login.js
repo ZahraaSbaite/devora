@@ -44,6 +44,7 @@ if(form){
 
 function friendlyError(err){
   const msg = (err && err.message || '').toLowerCase();
+  if(msg.includes('failed to fetch') || msg.includes('fetch failed') || msg.includes('network') || (err && err.name === 'AuthRetryableFetchError')) return "Can't reach the account server right now — please try again in a few minutes.";
   if(msg.includes('invalid login credentials')) return 'Incorrect email or password.';
   if(msg.includes('email not confirmed')) return 'Please confirm your email address first — check your inbox.';
   if(msg.includes('rate limit')) return 'Too many attempts — please wait a moment and try again.';
