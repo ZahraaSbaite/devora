@@ -369,3 +369,21 @@ form.order-form{
   form.order-form{padding:26px;}
   .strip{grid-template-columns:1fr;}
 }
+
+/* ---------- pointer effects (js/interact.js) ---------- */
+.cursor-glow{
+  position:fixed;
+  top:-210px; left:-210px;
+  width:420px; height:420px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(102,102,255,0.13), rgba(185,240,215,0.06) 45%, transparent 70%);
+  pointer-events:none;
+  z-index:-1;
+  opacity:0;
+  transition:opacity .4s ease;
+}
+.cursor-glow.is-on{opacity:1;}
+[data-theme="light"] .cursor-glow{
+  background:radial-gradient(circle, rgba(102,102,255,0.10), rgba(185,240,215,0.08) 45%, transparent 70%);
+}
+.magnetic{transition:transform .35s var(--ease), box-shadow .25s ease, background .25s ease, border-color .25s ease;}

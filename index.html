@@ -82,30 +82,21 @@
 
 <main id="top">
 
-  <section class="hero">
-    <div class="hero-glow" aria-hidden="true"></div>
-    <div class="wrap hero-row">
-      <div>
-        <span class="eyebrow"><span class="dot" aria-hidden="true"></span>Freelance web &amp; mobile development</span>
-        <h1>Development<br>that <span class="accent">speaks</span> for itself.</h1>
-        <p class="lede">Devora — <em>Dev</em>, for development, and <em>Ora</em>, Latin for speak. We design and build web and mobile products, then let the work do the talking.</p>
+  <section class="hero hero-3d" id="hero">
+    <canvas class="hero-scene" id="heroScene" aria-hidden="true"></canvas>
+    <div class="hero-word-wrap">
+      <h1 class="hero-word" id="heroWord" aria-label="Devora">
+        <span aria-hidden="true">D</span><span aria-hidden="true">E</span><span aria-hidden="true">V</span><span aria-hidden="true">O</span><span aria-hidden="true">R</span><span aria-hidden="true">A</span>
+      </h1>
+    </div>
+    <div class="wrap hero-sub">
+      <p class="hero-tagline">Development that <span class="accent">speaks</span> for itself.</p>
+      <div class="hero-sub-right">
+        <p class="lede"><em>Dev</em>, for development, and <em>Ora</em>, Latin for speak. A freelance studio that designs and builds web and mobile products, then lets the work do the talking.</p>
         <div class="hero-ctas">
-          <a href="contact.html" class="btn-primary">Place an order →</a>
-          <a href="contact.html#contact" class="btn-secondary">Get in touch</a>
+          <a href="contact.html" class="btn-primary">Start a project →</a>
+          <a href="portfolio.html" class="btn-secondary">See our work</a>
         </div>
-      </div>
-      <div class="hero-stage" id="heroStage" aria-hidden="true">
-        <div class="hero-stage-ring"></div>
-        <div class="code-window">
-          <div class="code-window-bar">
-            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
-            <span class="code-window-title">devora.build</span>
-          </div>
-          <div class="code-window-body">
-            <pre><code id="codeTyper"></code></pre>
-          </div>
-        </div>
-        <div class="hero-stage-tag">live build preview</div>
       </div>
     </div>
     <div class="wrap hero-stats reveal">
@@ -384,9 +375,11 @@
 <script src="js/theme.js"></script>
 <script src="js/reveal.js"></script>
 <script src="js/tilt.js"></script>
+<script src="js/interact.js"></script>
 <script type="module" src="js/auth.js"></script>
 <script type="module" src="js/home-projects.js"></script>
-<script src="js/code-demo.js"></script>
+<script type="module" src="js/hero-scene.js"></script>
+<script src="js/hero-word.js"></script>
 <script src="js/counter.js"></script>
 <script src="js/testimonials.js"></script>
 
