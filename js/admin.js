@@ -1,6 +1,6 @@
-import { getSupabase, isConfigured } from './supabase-config.js';
+import { getFirebase, isConfigured, docToObject } from './firebase-config.js';
 import { onAuthReady, isAdmin, logout } from './auth.js';
-import { CATEGORY_LABELS, escapeHtml } from './supabase-projects.js';
+import { CATEGORY_LABELS, escapeHtml } from './projects.js';
 
 const gate = document.getElementById('adminGate');
 const panel = document.getElementById('adminPanel');
@@ -56,41 +56,27 @@ function showGate(message, showLoginLink){
 }
 
 // ---------------------------------------------------------------------
-// Orders — realtime via Supabase Postgres Changes. We keep one in-memory
-// list (allOrders) and re-fetch + re-render whenever the table changes,
-// which is simpler and just as fast as patching individual rows for a
-// dashboard of this size.
+// Orders — a live Firestore listener keeps one in-memory list (allOrders)
+// and re-renders whenever anything in the collection changes.
 // ---------------------------------------------------------------------
 async function streamOrders(){
   if(!isConfigured) return;
   try{
-    const supabase = await getSupabase();
-    await reloadOrders(supabase);
-
-    supabase
-      .channel('orders-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => reloadOrders(supabase))
-      .subscribe();
+    const { db, fs } = await getFirebase();
+    const q = fs.query(fs.collection(db, 'orders'), fs.orderBy('created_at', 'desc'));
+    fs.onSnapshot(q, snap => {
+      allOrders = snap.docs.map(docToObject);
+      render();
+    }, err => {
+      console.error('Orders load failed:', err);
+      if(emptyState){
+        emptyState.hidden = false;
+        emptyState.textContent = 'Couldn\'t load orders — check your connection and the Firestore security rules.';
+      }
+    });
   }catch(err){
     console.error('Failed to start orders stream:', err);
   }
-}
-
-async function reloadOrders(supabase){
-  const { data, error } = await supabase
-    .from('orders')
-    .select('*')
-    .order('created_at', { ascending: false });
-  if(error){
-    console.error('Orders load failed:', error);
-    if(emptyState){
-      emptyState.hidden = false;
-      emptyState.textContent = 'Couldn\'t load orders — check your connection and Supabase RLS policies.';
-    }
-    return;
-  }
-  allOrders = data || [];
-  render();
 }
 
 function render(){
@@ -130,7 +116,6 @@ function render(){
           ${order.timeline ? `<span>${escapeHtml(order.timeline)}</span>` : ''}
         </div>
         <p class="order-row-details">${escapeHtml(order.details || '')}</p>
-        ${order.attachment_url ? `<a href="${order.attachment_url}" target="_blank" rel="noopener" class="order-attachment-link">📎 ${escapeHtml(order.attachment_name || 'Attachment')}</a>` : ''}
       </div>
       <div class="order-row-actions">
         <label>Status
@@ -154,9 +139,8 @@ function render(){
 
 async function updateStatus(orderId, status){
   try{
-    const supabase = await getSupabase();
-    const { error } = await supabase.from('orders').update({ status }).eq('id', orderId);
-    if(error) throw error;
+    const { db, fs } = await getFirebase();
+    await fs.updateDoc(fs.doc(db, 'orders', orderId), { status });
   }catch(err){
     console.error('Failed to update status:', err);
     alert('Couldn\'t update that order — please try again.');
@@ -166,9 +150,8 @@ async function updateStatus(orderId, status){
 async function deleteOrder(orderId){
   if(!confirm('Delete this order permanently?')) return;
   try{
-    const supabase = await getSupabase();
-    const { error } = await supabase.from('orders').delete().eq('id', orderId);
-    if(error) throw error;
+    const { db, fs } = await getFirebase();
+    await fs.deleteDoc(fs.doc(db, 'orders', orderId));
   }catch(err){
     console.error('Failed to delete order:', err);
     alert('Couldn\'t delete that order — please try again.');
@@ -212,11 +195,10 @@ const projectFormStatus = document.getElementById('projectFormStatus');
 const newProjectBtn = document.getElementById('newProjectBtn');
 const projectCancelBtn = document.getElementById('projectCancelBtn');
 const projectSaveBtn = document.getElementById('projectSaveBtn');
-const projectImageInput = document.getElementById('projectImage');
+const projectImageInput = document.getElementById('projectImageUrl');
 const projectImagePreview = document.getElementById('projectImagePreview');
 
 let allProjects = [];
-let editingImageUrl = '';
 
 function wireProjectForm(){
   if(!projectForm) return;
@@ -228,23 +210,14 @@ function wireProjectForm(){
     projectCancelBtn.addEventListener('click', () => closeProjectForm());
   }
   if(projectImageInput){
-    projectImageInput.addEventListener('change', () => {
-      const file = projectImageInput.files && projectImageInput.files[0];
-      if(!file){
-        renderImagePreview(editingImageUrl);
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = () => { projectImagePreview.innerHTML = `<img src="${reader.result}" alt="">`; };
-      reader.readAsDataURL(file);
-    });
+    projectImageInput.addEventListener('input', () => renderImagePreview(projectImageInput.value.trim()));
   }
   projectForm.addEventListener('submit', handleProjectSubmit);
 }
 
 function renderImagePreview(url){
   if(!projectImagePreview) return;
-  projectImagePreview.innerHTML = url ? `<img src="${url}" alt="">` : '<span>No image selected</span>';
+  projectImagePreview.innerHTML = url ? `<img src="${escapeHtml(url)}" alt="">` : '<span>No image yet</span>';
 }
 
 function openProjectForm(project){
@@ -258,9 +231,8 @@ function openProjectForm(project){
   document.getElementById('projectTags').value = project && Array.isArray(project.tags) ? project.tags.join(', ') : '';
   document.getElementById('projectLiveUrl').value = project ? (project.live_url || '') : '';
   document.getElementById('projectCaseStudyUrl').value = project ? (project.case_study_url || '') : '';
-  if(projectImageInput) projectImageInput.value = '';
-  editingImageUrl = project ? (project.image_url || '') : '';
-  renderImagePreview(editingImageUrl);
+  if(projectImageInput) projectImageInput.value = project ? (project.image_url || '') : '';
+  renderImagePreview(project ? (project.image_url || '') : '');
   projectFormTitle.textContent = project ? 'Edit project' : 'Add a project';
   projectForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
@@ -268,7 +240,6 @@ function openProjectForm(project){
 function closeProjectForm(){
   projectForm.reset();
   projectForm.hidden = true;
-  editingImageUrl = '';
   renderImagePreview('');
 }
 
@@ -281,6 +252,7 @@ async function handleProjectSubmit(e){
   const tags = document.getElementById('projectTags').value.split(',').map(t => t.trim()).filter(Boolean);
   const liveUrl = document.getElementById('projectLiveUrl').value.trim();
   const caseStudyUrl = document.getElementById('projectCaseStudyUrl').value.trim();
+  const imageUrl = projectImageInput ? projectImageInput.value.trim() : '';
 
   if(!title){
     projectFormStatus.textContent = 'Give the project a title.';
@@ -294,29 +266,17 @@ async function handleProjectSubmit(e){
   projectFormStatus.className = 'form-status';
 
   try{
-    if(!isConfigured) throw new Error('Supabase config not set yet.');
-    const supabase = await getSupabase();
-
-    let imageUrl = editingImageUrl;
-    const file = projectImageInput && projectImageInput.files && projectImageInput.files[0];
-    if(file){
-      if(file.size > 10 * 1024 * 1024) throw new Error('Image is larger than 10MB.');
-      const path = `${Date.now()}-${file.name}`;
-      const { error: uploadError } = await supabase.storage.from('project-images').upload(path, file);
-      if(uploadError) throw uploadError;
-      const { data: pub } = supabase.storage.from('project-images').getPublicUrl(path);
-      imageUrl = pub.publicUrl;
-    }
-
+    if(!isConfigured) throw new Error('Firebase config not set yet.');
+    const { db, fs } = await getFirebase();
     const data = {
       title, category, description, tags,
       live_url: liveUrl, case_study_url: caseStudyUrl, image_url: imageUrl
     };
-
-    const { error } = id
-      ? await supabase.from('projects').update(data).eq('id', id)
-      : await supabase.from('projects').insert(data);
-    if(error) throw error;
+    if(id){
+      await fs.updateDoc(fs.doc(db, 'projects', id), data);
+    }else{
+      await fs.addDoc(fs.collection(db, 'projects'), { ...data, created_at: fs.serverTimestamp() });
+    }
 
     closeProjectForm();
   }catch(err){
@@ -332,33 +292,21 @@ async function handleProjectSubmit(e){
 async function streamProjects(){
   if(!isConfigured || !projectsList) return;
   try{
-    const supabase = await getSupabase();
-    await reloadProjects(supabase);
-
-    supabase
-      .channel('projects-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'projects' }, () => reloadProjects(supabase))
-      .subscribe();
+    const { db, fs } = await getFirebase();
+    const q = fs.query(fs.collection(db, 'projects'), fs.orderBy('created_at', 'desc'));
+    fs.onSnapshot(q, snap => {
+      allProjects = snap.docs.map(docToObject);
+      renderProjects();
+    }, err => {
+      console.error('Projects load failed:', err);
+      if(projectsEmpty){
+        projectsEmpty.hidden = false;
+        projectsEmpty.textContent = 'Couldn\'t load projects — check your connection and the Firestore security rules.';
+      }
+    });
   }catch(err){
     console.error('Failed to start projects stream:', err);
   }
-}
-
-async function reloadProjects(supabase){
-  const { data, error } = await supabase
-    .from('projects')
-    .select('*')
-    .order('created_at', { ascending: false });
-  if(error){
-    console.error('Projects load failed:', error);
-    if(projectsEmpty){
-      projectsEmpty.hidden = false;
-      projectsEmpty.textContent = 'Couldn\'t load projects — check your connection and Supabase RLS policies.';
-    }
-    return;
-  }
-  allProjects = data || [];
-  renderProjects();
 }
 
 function renderProjects(){
@@ -377,7 +325,7 @@ function renderProjects(){
     row.className = 'project-row tilt-card';
     const tags = Array.isArray(project.tags) ? project.tags : [];
     const thumb = project.image_url
-      ? `<img src="${project.image_url}" alt="">`
+      ? `<img src="${escapeHtml(project.image_url)}" alt="">`
       : `<span>${escapeHtml((project.title || '?').charAt(0).toUpperCase())}</span>`;
 
     row.innerHTML = `
@@ -409,9 +357,8 @@ function renderProjects(){
 async function deleteProject(projectId){
   if(!confirm('Delete this project from the portfolio permanently?')) return;
   try{
-    const supabase = await getSupabase();
-    const { error } = await supabase.from('projects').delete().eq('id', projectId);
-    if(error) throw error;
+    const { db, fs } = await getFirebase();
+    await fs.deleteDoc(fs.doc(db, 'projects', projectId));
   }catch(err){
     console.error('Failed to delete project:', err);
     alert('Couldn\'t delete that project — please try again.');

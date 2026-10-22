@@ -1,153 +1,118 @@
 # Devora website
 
-A premium, multi-page rebuild of the Devora site: a 3D hero, hover-tilt
-cards, a full portfolio with filtering, a technology stack section, an
-animated 7-step process timeline, testimonials, an FAQ accordion, and a
-Supabase-backed order + portfolio system, plus an admin dashboard to manage
-incoming orders and the projects shown on the portfolio page.
+The Devora studio site: a full-screen 3D "DEVORA" hero, interactive 3D
+studio objects (Three.js), stacked color bands built from the brand palette,
+a live portfolio, an order form, and an admin dashboard with orders,
+portfolio management and visitor analytics. The backend is Firebase
+(Authentication + Cloud Firestore) on the free Spark plan.
 
 ## Structure
 
 ```
 devora-website/
-├── index.html            Home — hero, services, why choose us, portfolio teaser,
-│                          tech stack, stats, testimonials, process teaser
-├── services.html          Full services grid (hover to flip each card)
-├── portfolio.html         Filterable project grid (All / Websites / Mobile Apps / UI-UX)
-├── process.html           7-step animated horizontal timeline
-├── about.html             About us — studio story + team cards
-├── faq.html               Accordion FAQ
-├── contact.html           Order form (Supabase) — open to everyone
-├── login.html             Email/password sign-in (admin access only)
-├── signup.html            Email/password account creation
-├── admin.html             Order + project management dashboard (admin accounts only)
-├── privacy.html           Placeholder privacy policy
-├── terms.html             Placeholder terms of service
-├── robots.txt / sitemap.xml
+├── index.html          Home — DEVORA hero, services, selected work, process, reasons
+├── services.html       One color band per service
+├── portfolio.html      Live project grid (built-in projects + admin-added ones)
+├── process.html        One color band per step
+├── about.html          Name story, team badges, working principles
+├── faq.html            Accordion FAQ
+├── contact.html        Order form — open to everyone, no account needed
+├── login.html / signup.html   Email + password accounts (used for admin access)
+├── admin.html          Dashboard: Orders, Projects, Analytics (admins only)
+├── privacy.html / terms.html  Template legal pages
+├── firestore.rules     Security rules — paste into Firebase (see setup)
 ├── css/
-│   ├── variables.css      Colors, type, spacing (design tokens)
-│   ├── base.css            Reset, base type, scroll-reveal utility
-│   ├── layout.css          Header, nav, mobile menu, footer
-│   ├── components.css      Buttons, cards, forms, sections
-│   ├── hero.css            Home hero + code-window mockup
-│   ├── pages.css           Per-page tweaks
-│   └── app.css              Portfolio, tech stack, why-choose, stats,
-│                            testimonials, FAQ, timeline, auth pages, admin
-│                            dashboard (orders + projects tabs), nav account
-│                            menu, expanded footer
+│   ├── variables.css   Brand colors (Rich Black #0c0c16 background) and type
+│   ├── base.css / layout.css / components.css / pages.css / app.css
+│   ├── hero.css        Home hero (DEVORA word + 3D scene)
+│   ├── depth.css       3D reveals, card depth, footer word, marquee
+│   ├── bands.css       Stacked palette bands
+│   └── analytics.css   Admin analytics charts
 ├── js/
-│   ├── theme.js              Light/dark toggle (persisted)
-│   ├── nav.js                 Scroll header state, mobile menu, active link
-│   ├── reveal.js              Scroll-in animations
-│   ├── tilt.js                 Pointer-driven 3D tilt on cards
-│   ├── code-demo.js             Typewriter code animation in the home hero
-│   ├── counter.js               Animated stat counters
-│   ├── testimonials.js          Testimonial carousel
-│   ├── faq.js                   FAQ accordion
-│   ├── supabase-config.js       Your Supabase project URL/key + a shared,
-│   │                            lazily-initialized client getter (ES module)
-│   ├── auth.js                  Shared auth state, renders the nav's
-│   │                            login/account UI, admin check, logout
-│   ├── supabase-login.js        login.html logic
-│   ├── supabase-signup.js       signup.html logic
-│   ├── supabase-order.js        Order form → Supabase 'orders' table, open
-│   │                            to everyone, with company/phone/attachment
-│   ├── supabase-projects.js     Shared "read projects" module used by
-│   │                            portfolio.html and the home page teaser
-│   ├── portfolio-render.js      Renders the portfolio page's filter pills
-│   │                            + grid from live Supabase data
-│   ├── home-projects.js         Renders the home page's 3-project teaser
-│   └── admin.js                 admin.html logic — guards the page, streams
-│                                 orders AND projects in real time, handles
-│                                 status updates/deletes and full project
-│                                 CRUD (add/edit/delete + image upload)
-├── supabase/
-│   └── schema.sql            Run once in the Supabase SQL Editor — creates
-│                              the admins/orders/projects tables, Row Level
-│                              Security policies, and storage buckets
-└── assets/
-    ├── logo-mark.png, favicon.png, logo-full.png
+│   ├── firebase-config.js   Your Firebase web config + lazy SDK loader
+│   ├── auth.js              Session, admin check, nav account menu, logout
+│   ├── login.js / signup.js Account pages
+│   ├── order.js             Order form → Firestore 'orders'
+│   ├── email-config.js      Optional order notification email (EmailJS)
+│   ├── projects.js          Built-in + Firestore projects, shared card markup
+│   ├── portfolio-render.js / home-projects.js   Render the project grids
+│   ├── admin.js             Orders + projects management (live updates)
+│   ├── admin-analytics.js   Analytics tab (loaded only when opened)
+│   ├── track.js             Anonymous visit tracking on public pages
+│   ├── hero-scene.js        Three.js studio objects (home + page headers)
+│   ├── hero-word.js         Sizes and tilts the DEVORA word
+│   ├── bands.js / depth.js / interact.js / tilt.js / reveal.js   Motion
+│   └── nav.js / faq.js
+└── assets/             Logo, favicon, assets/work/ project screenshots
 ```
 
-Nothing here needs a build step — it's static HTML/CSS/JS you can open
-directly or drop on any static host (Netlify, Vercel, GitHub Pages,
-Cloudflare Pages, etc). Supabase is the backend; no server code to deploy.
+No build step — it's static HTML/CSS/JS. Push to GitHub and Netlify (or any
+static host) serves it as-is.
 
-## What's in the admin dashboard
+## Set up Firebase (one time)
 
-Open `admin.html` (or click your account menu → "Admin dashboard" once
-logged in) to get three tabs:
-
-- **Orders** — every brief submitted through `contact.html`, in real time,
-  with status filtering (New / Contacted / In progress / Completed /
-  Archived), inline status updates, and delete.
-- **Projects** — click **"+ Add project"** to create a portfolio entry:
-  title, category (Websites / Mobile Apps / UI/UX), description, tags, an
-  optional cover image (uploaded straight to Supabase Storage), and
-  optional live-site / case-study links. Every project you add appears
-  immediately on `portfolio.html` under the matching filter pill, and the 3
-  most recent show up in the home page's portfolio teaser. Edit or delete
-  any project from the same list.
-- **Analytics** — visits, page views, orders and conversion rate for the
-  last 7 / 30 / 90 days (each compared with the period before), daily
-  traffic, top pages, traffic sources, devices, the most-clicked buttons and
-  project links, and orders by status and project type. Every chart has a
-  "View as table" option.
-
-  **One-time setup:** in Supabase → SQL Editor, run the whole of
-  `supabase/analytics.sql`. That creates the `analytics_events` table that
-  `js/track.js` writes to. Visits are anonymous (no cookies, no IP address,
-  nothing personal), aren't recorded when the site runs on localhost, and
-  respect the browser's Do Not Track setting.
-
-Only accounts you've marked as admins can see this page — everyone else is
-redirected to log in.
-
-## Connect it to your Supabase project
-
-1. **Create a project** at [supabase.com](https://supabase.com) if you
-   don't have one yet.
-2. **Run the schema.** Dashboard → **SQL Editor** → New query → paste the
-   entire contents of `supabase/schema.sql` → **Run**. This creates the
-   `admins`, `orders`, and `projects` tables with Row Level Security
-   policies already locked down, plus two Storage buckets
-   (`order-attachments`, `project-images`).
-3. **Enable email/password auth** (it's on by default). Dashboard →
-   **Authentication → Providers** → make sure **Email** is enabled. While
-   you're setting this up, you can also turn **off** "Confirm email" under
-   **Authentication → Settings** so your own admin account is active
-   immediately after signup — turn it back on later if you want visitors
-   who sign up to confirm their email.
-4. **Get your API keys.** Dashboard → **Project Settings → API** → copy the
-   **Project URL** and the **anon public** key (not `service_role` — that
-   one must never go in client code) into `js/supabase-config.js`:
+1. **Create a project** at [console.firebase.google.com](https://console.firebase.google.com)
+   → **Add project**. Google Analytics for the project is optional (the site
+   has its own analytics).
+2. **Add a web app:** Project overview → the **`</>`** (Web) icon → give it a
+   name → **Register app**. Copy the four values from the `firebaseConfig`
+   it shows into `js/firebase-config.js`:
    ```js
-   export const SUPABASE_URL = "https://xxxxxxxx.supabase.co";
-   export const SUPABASE_ANON_KEY = "eyJhbGciOi...";
+   export const FIREBASE_CONFIG = {
+     apiKey: "AIza...",
+     authDomain: "your-project.firebaseapp.com",
+     projectId: "your-project",
+     appId: "1:123...:web:abc..."
+   };
    ```
-5. **Make yourself an admin:**
-   - Create an account on `signup.html` for yourself (this is the account
-     you'll use to log into `admin.html` — not something visitors need).
-   - In the Supabase dashboard, go to **Authentication → Users** and copy
-     that account's **User UID**.
-   - Go to **SQL Editor** and run:
-     ```sql
-     insert into public.admins (id) values ('paste-the-uid-here');
-     ```
-   - Log in with that account on `login.html` and open `admin.html` — you
-     should see the dashboard. Repeat for any other admin accounts.
-6. **Test the flow end to end:** submit an order on `contact.html` (no
-   login needed), then log in with your admin account and check it shows
-   up in `admin.html` → Orders tab and in **Table Editor → orders** in the
-   Supabase dashboard. Then add a project from the **Projects** tab and
-   confirm it appears on `portfolio.html`.
+3. **Turn on email/password sign-in:** Build → **Authentication** → Get
+   started → **Sign-in method** → **Email/Password** → Enable → Save.
+4. **Create the database:** Build → **Firestore Database** → Create database
+   → pick a location close to your visitors → start in **production mode**.
+5. **Publish the security rules:** Firestore Database → **Rules** → replace
+   everything with the contents of `firestore.rules` → **Publish**.
+6. **Allow your domain:** Authentication → **Settings** → **Authorized
+   domains** → add your live domain (for example `devoratec.netlify.app`).
+   `localhost` is already there for local previews.
+
+## Make someone an admin
+
+1. They create an account on `signup.html`.
+2. Firebase → **Authentication → Users** → copy that account's **User UID**.
+3. Firestore Database → **Data** → **Start collection** (or open `admins`)
+   → collection ID `admins` → **Document ID** = the UID → add any field
+   (for example `email` = their address) → **Save**.
+
+Repeat for each admin. The site can never create admin documents itself —
+only you can, in the console.
+
+## How to open the admin dashboard
+
+Sign in on `login.html`, then open `admin.html` (or use the account menu in
+the top-right → **Admin dashboard**). Signed-out visitors get a "Log in"
+button; accounts that aren't admins are told they don't have access.
+
+- **Orders** — every brief from `contact.html`, live, with status filtering,
+  status changes and delete.
+- **Projects** — add, edit or delete portfolio entries. Cover images are a
+  link: paste any image URL, or add a screenshot to `assets/work/` and enter
+  `assets/work/your-file.jpg`.
+- **Analytics** — visits, page views, orders and conversion rate for the
+  last 7 / 30 / 90 days (each vs the period before), daily traffic, top
+  pages, traffic sources, devices, most-clicked links, and orders by status
+  and type. Every chart has a "View as table" option.
+
+Visit tracking (`js/track.js`) is anonymous: no cookies, no IP address,
+nothing personal — the page, the referring site's domain, the device type,
+and a random id that lasts one browser tab. It's skipped on localhost and
+when the browser sends Do Not Track.
 
 ## Get an email whenever an order comes in
 
 `js/email-config.js` sends a notification email straight from the browser
 right after an order is saved, using [EmailJS](https://www.emailjs.com) (a
 free tier is enough for a low-volume order form). No backend to deploy —
-same idea as `js/supabase-config.js`.
+same idea as `js/firebase-config.js`.
 
 1. Create a free account at [emailjs.com](https://www.emailjs.com).
 2. **Email Services → Add New Service** → connect the inbox that should
@@ -170,36 +135,13 @@ received? EmailJS supports this as a second template + a second
 `emailjs.send()` call, or an "Auto-Reply" rule on the same template — ask
 and it can be wired in the same way.
 
-## How to open the admin panel
-
-1. Go to `login.html` on your deployed site (or open it locally) and sign
-   in with an account you've added to the `admins` table (see step 5
-   above). If you haven't created that account yet, go to `signup.html`
-   first, then follow step 5 to grant it admin access.
-2. Once signed in, either open `admin.html` directly, or click the account
-   menu in the top-right of the nav → **"Admin dashboard"**.
-3. Use the **Orders** / **Projects** tabs at the top of the dashboard to
-   switch between managing incoming briefs and managing the portfolio.
-
-Accounts that aren't in the `admins` table are redirected straight to the
-login page if they try to visit `admin.html` — the order form itself stays
-open to everyone with no login required.
-
 ## Notes
 
-- The home hero's code-window animation, the tilt effect on cards, and all
-  scroll/entrance animations back off automatically for people with
-  "reduce motion" turned on; the tilt effect is also skipped on touch
-  devices.
-- Attachment uploads don't require an account (matching the open order
-  form) — anyone can upload up to 10MB, and admins can read the file back
-  from the dashboard via its download link.
-- `portfolio.html` and the home page's portfolio teaser render straight
-  from the `projects` table — there's nothing to hand-edit in the HTML
-  anymore; manage everything from `admin.html`.
-- `about.html` still ships with placeholder team members — edit the
-  `.team-card` blocks directly with real names/roles/bios/photos.
+- Animations back off for people with "reduce motion" turned on; pointer
+  effects are skipped on touch screens.
+- The four client projects in `js/projects.js` (`FEATURED_PROJECTS`) always
+  show, even before Firebase is set up; admin-added projects appear first.
+- Stylesheet and script links carry a `?v=` version tag. Bump it in every
+  HTML file when you change CSS or JS, so browsers don't keep old copies.
 - `privacy.html` and `terms.html` are template legal pages, not legal
-  advice — review and adjust before relying on them.
-- The logo lives in `assets/` — replace any file there by swapping it in;
-  no HTML changes needed as long as filenames stay the same.
+  advice — review them before relying on them.

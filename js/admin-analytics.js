@@ -3,7 +3,7 @@
 // KPI tiles with change vs the previous period, daily traffic, top pages,
 // traffic sources, devices, most-clicked links, and orders by status/type.
 // Charts are plain SVG/HTML; every value is also reachable in a table view.
-import { getSupabase } from './supabase-config.js';
+import { getFirebase, docToObject } from './firebase-config.js';
 
 const SVG = 'http://www.w3.org/2000/svg';
 const DAY = 86400000;
@@ -50,14 +50,14 @@ async function refresh(){
   const body = root.querySelector('#anBody');
   body.classList.add('is-loading'); // keep the previous render, dimmed
   try{
-    const supabase = await getSupabase();
+    const firebase = await getFirebase();
     const now = new Date();
     const start = startOfDay(new Date(now.getTime() - (rangeDays - 1) * DAY));
     const prevStart = new Date(start.getTime() - rangeDays * DAY);
 
     const [events, orders] = await Promise.all([
-      fetchAll(supabase, 'analytics_events', 'created_at,type,path,label,referrer,session_id,device', prevStart),
-      fetchAll(supabase, 'orders', 'created_at,status,project_type', prevStart)
+      fetchSince(firebase, 'analytics_events', prevStart),
+      fetchSince(firebase, 'orders', prevStart)
     ]);
     lastData = { events, orders, start, prevStart, now };
     notice(events.length ? null : 'empty');
@@ -65,31 +65,26 @@ async function refresh(){
     root.querySelector('#anUpdated').textContent = 'Updated ' + now.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
   }catch(err){
     console.error('Analytics load failed:', err);
-    notice(/analytics_events/.test(err.message || '') || err.code === '42P01' || err.code === 'PGRST205' ? 'setup' : 'error');
+    notice(err.code === 'permission-denied' ? 'setup' : 'error');
   }finally{
     body.classList.remove('is-loading');
   }
 }
 
-// Supabase returns at most 1000 rows per request, so page through.
-async function fetchAll(supabase, table, columns, since){
-  const rows = [];
-  for(let from = 0; from < 50000; from += 1000){
-    const { data, error } = await supabase.from(table).select(columns)
-      .gte('created_at', since.toISOString())
-      .order('created_at', { ascending: true })
-      .range(from, from + 999);
-    if(error){ const e = new Error(`${table}: ${error.message}`); e.code = error.code; throw e; }
-    rows.push(...data);
-    if(data.length < 1000) break;
-  }
-  return rows;
+// Every document in a collection created on or after `since`, oldest first,
+// as plain objects with ISO date strings.
+async function fetchSince({ db, fs }, name, since){
+  const q = fs.query(fs.collection(db, name),
+    fs.where('created_at', '>=', fs.Timestamp.fromDate(since)),
+    fs.orderBy('created_at', 'asc'));
+  const snap = await fs.getDocs(q);
+  return snap.docs.map(docToObject);
 }
 
 function notice(kind){
   const box = root.querySelector('#anNotice');
   const messages = {
-    setup: ['Analytics isn\'t set up yet.', 'Run supabase/analytics.sql once in the Supabase SQL Editor, then refresh. Visits are recorded from then on.'],
+    setup: ["Analytics can't be read yet.", 'Publish the rules from firestore.rules in Firebase (Firestore Database → Rules) and make sure your account is in the admins collection, then press Refresh.'],
     empty: ['No visits recorded in this period yet.', 'Visits are recorded on the live site only — previews on your own computer aren\'t counted. Order charts below still use your real orders.'],
     error: ['Couldn\'t load analytics.', 'Check your connection, then press Refresh.']
   };

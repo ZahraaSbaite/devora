@@ -1,9 +1,9 @@
 // Anonymous, cookie-free analytics for the public pages. Records a page view
 // on load and a click on the main calls to action and project links, into
-// the analytics_events table (supabase/analytics.sql). Nothing personal is
+// the analytics_events collection in Firestore. Nothing personal is
 // sent: no IP is stored, and the visit id is random and lives only in this
 // tab's sessionStorage.
-import { SUPABASE_URL, SUPABASE_ANON_KEY, isConfigured } from './supabase-config.js';
+import { FIREBASE_CONFIG, isConfigured } from './firebase-config.js';
 
 const LOCAL_HOSTS = ['localhost', '127.0.0.1', ''];
 const skip =
@@ -11,7 +11,12 @@ const skip =
   LOCAL_HOSTS.includes(location.hostname) ||       // don't count local previews
   navigator.doNotTrack === '1' || window.doNotTrack === '1';
 
-const ENDPOINT = `${SUPABASE_URL}/rest/v1/analytics_events`;
+// Firestore's REST API: one small request per event, no SDK download
+const ENDPOINT = `https://firestore.googleapis.com/v1/projects/${FIREBASE_CONFIG.projectId}` +
+  `/databases/(default)/documents/analytics_events?key=${FIREBASE_CONFIG.apiKey}`;
+
+// Firestore REST wants every field typed
+const field = v => v === null || v === undefined ? { nullValue: null } : { stringValue: String(v) };
 
 function sessionId(){
   try{
@@ -50,17 +55,15 @@ function referrer(){
 
 function send(event){
   if(skip) return;
-  const body = JSON.stringify({ ...event, path: pagePath(), session_id: sessionId(), device: device() });
+  const data = { label: null, referrer: null, ...event, path: pagePath(), session_id: sessionId(), device: device() };
+  const fields = {};
+  Object.entries(data).forEach(([k, v]) => { fields[k] = field(v); });
+  fields.created_at = { timestampValue: new Date().toISOString() };
   fetch(ENDPOINT, {
     method: 'POST',
     keepalive: true, // lets click events finish while the browser navigates away
-    headers: {
-      'Content-Type': 'application/json',
-      apikey: SUPABASE_ANON_KEY,
-      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-      Prefer: 'return=minimal'
-    },
-    body
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ fields })
   }).catch(() => {}); // analytics must never break the page
 }
 

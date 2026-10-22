@@ -1,4 +1,4 @@
-import { FEATURED_PROJECTS, loadAllProjects, projectCardHtml } from './supabase-projects.js';
+import { FEATURED_PROJECTS, loadAllProjects, projectCardHtml } from './projects.js';
 
 const gridEl = document.getElementById('homePortfolioGrid');
 if(gridEl){
@@ -10,7 +10,7 @@ if(gridEl){
   };
 
   // Show the built-in projects right away, then swap in the merged list
-  // once Supabase responds (it may include newer admin-added projects).
+  // once Firestore responds (it may include newer admin-added projects).
   render(FEATURED_PROJECTS);
   loadAllProjects().then(render);
 }

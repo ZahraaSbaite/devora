@@ -1,37 +1,37 @@
-import { getSupabase, isConfigured } from './supabase-config.js';
+import { getFirebase, isConfigured } from './firebase-config.js';
 
-// Resolves with the current Supabase user (or null) once auth state is
-// known. Other modules (contact page gate, admin dashboard) import this so
-// they never have to duplicate the session-fetching logic.
+// Resolves with the current Firebase user (or null) once auth state is
+// known. Firebase reports this through a listener, so wait for its first
+// answer. Other modules (contact page gate, admin dashboard) import this so
+// they never have to duplicate the session logic.
+let authReady = null;
 export function onAuthReady(){
-  return (async () => {
-    if(!isConfigured) return null;
-    try{
-      const supabase = await getSupabase();
-      const { data, error } = await supabase.auth.getSession();
-      if(error){ console.error('Session check failed:', error); return null; }
-      return data.session ? data.session.user : null;
-    }catch(err){
-      console.error('Auth check failed:', err);
-      return null;
-    }
-  })();
+  if(!authReady){
+    authReady = (async () => {
+      if(!isConfigured) return null;
+      try{
+        const { auth, authApi } = await getFirebase();
+        return await new Promise(resolve => {
+          const stop = authApi.onAuthStateChanged(auth, user => { stop(); resolve(user); }, () => resolve(null));
+        });
+      }catch(err){
+        console.error('Auth check failed:', err);
+        return null;
+      }
+    })();
+  }
+  return authReady;
 }
 
-// Checks the "admins" table for a row whose id === the user's id. RLS only
-// lets a signed-in user select their own admin row, so this never leaks the
-// full admin list to the client.
+// An admin is a user with a document at admins/{uid}. Security rules only
+// let a signed-in user read their own admin document, so this never leaks
+// the admin list to the client.
 export async function isAdmin(user){
   if(!user) return false;
   try{
-    const supabase = await getSupabase();
-    const { data, error } = await supabase
-      .from('admins')
-      .select('id')
-      .eq('id', user.id)
-      .maybeSingle();
-    if(error){ console.error('Admin check failed:', error); return false; }
-    return !!data;
+    const { db, fs } = await getFirebase();
+    const snap = await fs.getDoc(fs.doc(db, 'admins', user.uid));
+    return snap.exists();
   }catch(err){
     console.error('Admin check failed:', err);
     return false;
@@ -40,12 +40,18 @@ export async function isAdmin(user){
 
 export async function logout(){
   try{
-    const supabase = await getSupabase();
-    await supabase.auth.signOut();
+    const { auth, authApi } = await getFirebase();
+    await authApi.signOut(auth);
   }catch(err){
     console.error('Sign out failed:', err);
   }
   window.location.href = 'index.html';
+}
+
+function escapeText(str){
+  const div = document.createElement('div');
+  div.textContent = str || '';
+  return div.innerHTML;
 }
 
 // ---------------------------------------------------------------------
@@ -65,7 +71,7 @@ function renderSignedOut(){
 }
 
 function renderSignedIn(user, admin){
-  const label = (user.user_metadata && user.user_metadata.full_name) || user.email || 'Account';
+  const label = escapeText(user.displayName || user.email || 'Account');
   const desktop = document.getElementById('navAuth');
   const mobile = document.getElementById('mobileAuthLinks');
   if(desktop){
@@ -76,7 +82,7 @@ function renderSignedIn(user, admin){
           <span class="nav-account-name">${label.split('@')[0]}</span>
         </button>
         <div class="nav-account-drop" id="navAccountDrop">
-          <span class="nav-account-email">${user.email || ''}</span>
+          <span class="nav-account-email">${escapeText(user.email)}</span>
           ${admin ? '<a href="admin.html">Admin dashboard</a>' : ''}
           <button type="button" id="navLogoutBtn">Log out</button>
         </div>

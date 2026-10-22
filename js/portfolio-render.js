@@ -1,10 +1,10 @@
-import { FEATURED_PROJECTS, loadAllProjects, projectCardHtml, CATEGORY_LABELS } from './supabase-projects.js';
+import { FEATURED_PROJECTS, loadAllProjects, projectCardHtml, CATEGORY_LABELS } from './projects.js';
 
 const filtersEl = document.getElementById('portfolioFilters');
 const gridEl = document.getElementById('portfolioGrid');
 if(filtersEl && gridEl){
   // Show the built-in projects right away, then swap in the merged list
-  // once Supabase responds (it may include newer admin-added projects).
+  // once Firestore responds (it may include newer admin-added projects).
   render(FEATURED_PROJECTS);
   loadAllProjects().then(render);
 }

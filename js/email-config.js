@@ -35,7 +35,7 @@ export const isEmailConfigured =
 let sdkPromise = null;
 
 // Lazily loads the EmailJS browser SDK from CDN once, the same way
-// supabase-config.js lazily loads the Supabase SDK.
+// firebase-config.js lazily loads the Firebase SDK.
 function loadEmailJs(){
   if(!sdkPromise){
     sdkPromise = import('https://esm.sh/@emailjs/browser@4').then((mod) => {
@@ -49,7 +49,7 @@ function loadEmailJs(){
 
 // Sends the "new order" notification email. Never throws — a failed
 // notification should never make the order submission itself look like
-// it failed, since the order is already safely saved in Supabase by the
+// it failed, since the order is already safely saved in Firestore by the
 // time this runs. Callers can still inspect the resolved boolean if they
 // want to surface a soft warning.
 export async function sendOrderNotification(order){

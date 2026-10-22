@@ -1,4 +1,4 @@
-import { getSupabase, isConfigured } from './supabase-config.js';
+import { getFirebase, isConfigured, docToObject } from './firebase-config.js';
 
 // Human labels for each category value stored on a project row. Keep these
 // keys in sync with the <option>/data-filter values in portfolio.html and
@@ -9,7 +9,7 @@ export const CATEGORY_LABELS = {
   uiux: 'UI/UX'
 };
 
-// Maps a Supabase 'projects' row (snake_case columns) to the camelCase
+// Maps a Firestore 'projects' document (snake_case fields) to the camelCase
 // shape the rest of the front end expects.
 function mapProject(row){
   return {
@@ -26,26 +26,22 @@ function mapProject(row){
 }
 
 // One-time read of every project, newest first. Used by public pages
-// (portfolio.html, the home page teaser) — no auth required, matches the
-// "select using (true)" RLS policy on the projects table.
+// (portfolio.html, the home page teaser) — no sign-in needed; the security
+// rules let anyone read projects.
 export async function fetchProjects(){
   if(!isConfigured) return [];
   try{
-    const supabase = await getSupabase();
-    const { data, error } = await supabase
-      .from('projects')
-      .select('*')
-      .order('created_at', { ascending: false });
-    if(error){ console.error('Failed to load projects:', error); return []; }
-    return (data || []).map(mapProject);
+    const { db, fs } = await getFirebase();
+    const snap = await fs.getDocs(fs.query(fs.collection(db, 'projects'), fs.orderBy('created_at', 'desc')));
+    return snap.docs.map(d => mapProject(docToObject(d)));
   }catch(err){
     console.error('Failed to load projects:', err);
     return [];
   }
 }
 
-// Shipped client work that always appears on the site, even if Supabase is
-// unreachable or the projects table is empty. Projects added through the
+// Shipped client work that always appears on the site, even if Firebase is
+// unreachable or the projects collection is empty. Projects added through the
 // admin panel are shown alongside these.
 export const FEATURED_PROJECTS = [
   {
@@ -90,7 +86,7 @@ export const FEATURED_PROJECTS = [
   }
 ];
 
-// Supabase projects (newest first) followed by the featured projects,
+// Admin-added projects (newest first) followed by the featured projects,
 // skipping any featured entry the admin has already added with the same URL.
 export async function loadAllProjects(){
   const remote = await fetchProjects();

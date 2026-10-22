@@ -1,4 +1,4 @@
-import { getSupabase, isConfigured } from './supabase-config.js';
+import { getFirebase, isConfigured } from './firebase-config.js';
 import { sendOrderNotification } from './email-config.js';
 
 const form = document.getElementById('orderForm');
@@ -36,31 +36,12 @@ if(form){
 
     try{
       if(!isConfigured){
-        throw new Error('Supabase config not set yet (js/supabase-config.js still has placeholder values).');
+        throw new Error('Firebase config not set yet (js/firebase-config.js still has placeholder values).');
       }
 
-      const supabase = await getSupabase();
-
-      // Optional attachment — uploaded to Storage first so the orders row
-      // only ever stores a URL, never the file itself.
-      const fileInput = document.getElementById('attachment');
-      if(fileInput && fileInput.files && fileInput.files[0]){
-        const file = fileInput.files[0];
-        if(file.size > 10 * 1024 * 1024){
-          throw new Error('Attachment is larger than 10MB.');
-        }
-        const path = `${Date.now()}-${file.name}`;
-        const { error: uploadError } = await supabase.storage
-          .from('order-attachments')
-          .upload(path, file);
-        if(uploadError) throw uploadError;
-        const { data: pub } = supabase.storage.from('order-attachments').getPublicUrl(path);
-        data.attachment_url = pub.publicUrl;
-        data.attachment_name = file.name;
-      }
-
-      const { error } = await supabase.from('orders').insert(data);
-      if(error) throw error;
+      const { db, fs } = await getFirebase();
+      // created_at is stamped by the server, so it can't be backdated
+      await fs.addDoc(fs.collection(db, 'orders'), { ...data, created_at: fs.serverTimestamp() });
 
       // The order is safely saved at this point — a failed notification
       // email should never make it look like the order itself failed (and
@@ -73,9 +54,7 @@ if(form){
       status.classList.add('ok');
     }catch(err){
       console.error('Order submission failed:', err);
-      status.textContent = err.message && err.message.includes('10MB')
-        ? 'Order failed — ' + err.message
-        : 'Order failed — something went wrong. Email devora.inbox@gmail.com directly.';
+      status.textContent = 'Order failed — something went wrong. Email devora.inbox@gmail.com directly.';
       status.classList.add('err');
     }finally{
       btn.disabled = false;

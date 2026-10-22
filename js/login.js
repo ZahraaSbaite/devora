@@ -1,4 +1,4 @@
-import { getSupabase, isConfigured } from './supabase-config.js';
+import { getFirebase, isConfigured } from './firebase-config.js';
 import { onAuthReady } from './auth.js';
 
 const form = document.getElementById('loginForm');
@@ -24,13 +24,9 @@ if(form){
     status.className = 'form-status';
 
     try{
-      if(!isConfigured) throw new Error('Supabase not configured yet.');
-      const supabase = await getSupabase();
-      const { error } = await supabase.auth.signInWithPassword({
-        email: form.Email.value.trim(),
-        password: form.Password.value
-      });
-      if(error) throw error;
+      if(!isConfigured) throw new Error('Firebase not configured yet.');
+      const { auth, authApi } = await getFirebase();
+      await authApi.signInWithEmailAndPassword(auth, form.Email.value.trim(), form.Password.value);
       window.location.href = redirectTarget();
     }catch(err){
       console.error('Login failed:', err);
@@ -43,10 +39,11 @@ if(form){
 }
 
 function friendlyError(err){
-  const msg = (err && err.message || '').toLowerCase();
-  if(msg.includes('failed to fetch') || msg.includes('fetch failed') || msg.includes('network') || (err && err.name === 'AuthRetryableFetchError')) return "Can't reach the account server right now — please try again in a few minutes.";
-  if(msg.includes('invalid login credentials')) return 'Incorrect email or password.';
-  if(msg.includes('email not confirmed')) return 'Please confirm your email address first — check your inbox.';
-  if(msg.includes('rate limit')) return 'Too many attempts — please wait a moment and try again.';
+  const code = (err && err.code) || '';
+  if(code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found') return 'Incorrect email or password.';
+  if(code === 'auth/invalid-email') return "That email address doesn't look right.";
+  if(code === 'auth/too-many-requests') return 'Too many attempts — please wait a moment and try again.';
+  if(code === 'auth/user-disabled') return 'This account has been disabled.';
+  if(code === 'auth/network-request-failed') return "Can't reach the account server right now — please try again in a few minutes.";
   return 'Something went wrong — please try again.';
 }
