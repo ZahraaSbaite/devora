@@ -38,7 +38,7 @@ let sdkPromise = null;
 // firebase-config.js lazily loads the Firebase SDK.
 function loadEmailJs(){
   if(!sdkPromise){
-    sdkPromise = import('https://esm.sh/@emailjs/browser@4').then((mod) => {
+    sdkPromise = import('https://cdn.jsdelivr.net/npm/@emailjs/browser@4.4.1/+esm').then((mod) => {
       const emailjs = mod.default || mod;
       emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
       return emailjs;

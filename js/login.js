@@ -1,5 +1,5 @@
 import { getFirebase, isConfigured } from './firebase-config.js';
-import { onAuthReady } from './auth.js';
+import { onAuthReady, safeRedirect } from './auth.js';
 
 const form = document.getElementById('loginForm');
 if(form){
@@ -13,7 +13,7 @@ if(form){
 
   function redirectTarget(){
     const params = new URLSearchParams(window.location.search);
-    return params.get('redirect') || 'contact.html';
+    return safeRedirect(params.get('redirect'));
   }
 
   form.addEventListener('submit', async (e) => {

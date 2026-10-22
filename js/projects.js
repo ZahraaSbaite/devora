@@ -99,11 +99,32 @@ export function normalizeUrl(url){
   return (url || '').replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '').toLowerCase();
 }
 
+// Escapes text for use inside HTML, including attribute values (quotes).
 export function escapeHtml(str){
-  const div = document.createElement('div');
-  div.textContent = str || '';
-  return div.innerHTML;
+  return String(str == null ? '' : str)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
+
+// Only web links (http/https) and site-relative paths are allowed in href/src;
+// anything else (javascript:, data:, //other-host) becomes an empty string.
+export function safeUrl(url){
+  // browsers ignore tabs, newlines and control characters inside URLs
+  // ("java\tscript:"), so drop them before checking the scheme
+  const u = String(url || '').replace(/[\u0000-\u0020\u007f]+/g, '');
+  if(/^https?:\/\//i.test(u)) return u;
+  // site-relative paths: plain URL characters only, no scheme, no "//host"
+  if(!u.startsWith('//') && /^\/?[\w\-.~%/?#=&+]+$/.test(u)) return u;
+  return '';
+}
+
+// A cover image that fails to load is removed so the letter mark shows
+// (a listener here instead of an inline onerror, so the CSP can forbid
+// inline script).
+document.addEventListener('error', e => {
+  const img = e.target;
+  if(img && img.tagName === 'IMG' && img.closest && img.closest('.portfolio-preview')) img.remove();
+}, true);
 
 // Builds one .portfolio-card element for a project. Shared by the
 // portfolio page and the home page teaser so both stay visually identical.
@@ -113,16 +134,19 @@ export function projectCardHtml(project){
   // The letter mark always renders; the screenshot (if any) covers it and
   // removes itself if the file is missing, so a card never shows a broken image.
   const mark = `<span class="portfolio-mark">${escapeHtml((project.title || '?').charAt(0).toUpperCase())}</span>`;
-  const preview = project.imageUrl
-    ? `${mark}<img src="${escapeHtml(project.imageUrl)}" alt="${escapeHtml(project.title)}" loading="lazy" onerror="this.remove()">`
+  const imageUrl = safeUrl(project.imageUrl);
+  const preview = imageUrl
+    ? `${mark}<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(project.title)}" loading="lazy">`
     : mark;
 
   const links = [];
-  if(project.liveUrl){
-    links.push(`<a href="${escapeHtml(project.liveUrl)}" class="primary" target="_blank" rel="noopener">Visit site →</a>`);
+  const liveUrl = safeUrl(project.liveUrl);
+  const caseStudyUrl = safeUrl(project.caseStudyUrl);
+  if(liveUrl){
+    links.push(`<a href="${escapeHtml(liveUrl)}" class="primary" target="_blank" rel="noopener noreferrer">Visit site →</a>`);
   }
-  if(project.caseStudyUrl){
-    links.push(`<a href="${escapeHtml(project.caseStudyUrl)}" target="_blank" rel="noopener">Case study</a>`);
+  if(caseStudyUrl){
+    links.push(`<a href="${escapeHtml(caseStudyUrl)}" target="_blank" rel="noopener noreferrer">Case study</a>`);
   }
 
   return `

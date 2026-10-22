@@ -26,14 +26,29 @@ export function onAuthReady(){
 // An admin is a user with a document at admins/{uid}. Security rules only
 // let a signed-in user read their own admin document, so this never leaks
 // the admin list to the client.
+// Returns 'yes', 'no', or 'error' when the database couldn't be reached
+// (a slow or flaky connection) — that's retried a few times first, and is
+// never reported as "not an admin".
+export async function checkAdmin(user){
+  if(!user) return 'no';
+  const { db, fs } = await getFirebase();
+  for(let attempt = 1; attempt <= 3; attempt++){
+    try{
+      const snap = await fs.getDoc(fs.doc(db, 'admins', user.uid));
+      return snap.exists() ? 'yes' : 'no';
+    }catch(err){
+      if(err && err.code === 'permission-denied') return 'no';
+      console.error(`Admin check failed (attempt ${attempt}):`, err);
+      if(attempt < 3) await new Promise(r => setTimeout(r, attempt * 1500));
+    }
+  }
+  return 'error';
+}
+
 export async function isAdmin(user){
-  if(!user) return false;
   try{
-    const { db, fs } = await getFirebase();
-    const snap = await fs.getDoc(fs.doc(db, 'admins', user.uid));
-    return snap.exists();
+    return (await checkAdmin(user)) === 'yes';
   }catch(err){
-    console.error('Admin check failed:', err);
     return false;
   }
 }
@@ -46,6 +61,20 @@ export async function logout(){
     console.error('Sign out failed:', err);
   }
   window.location.href = 'index.html';
+}
+
+// Where to go after logging in / signing up: only a page on this same site.
+// A ?redirect= pointing anywhere else (another domain, javascript:, data:)
+// falls back to the default, so a crafted link can't hijack a session.
+export function safeRedirect(target, fallback = 'contact.html'){
+  if(!target) return fallback;
+  try{
+    const url = new URL(target, window.location.href);
+    if(url.origin !== window.location.origin || !/^https?:$/.test(url.protocol)) return fallback;
+    return url.pathname + url.search + url.hash;
+  }catch(err){
+    return fallback;
+  }
 }
 
 function escapeText(str){

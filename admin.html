@@ -17,15 +17,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/variables.css?v=20261022f">
-<link rel="stylesheet" href="css/base.css?v=20261022f">
-<link rel="stylesheet" href="css/layout.css?v=20261022f">
-<link rel="stylesheet" href="css/components.css?v=20261022f">
-<link rel="stylesheet" href="css/hero.css?v=20261022f">
-<link rel="stylesheet" href="css/pages.css?v=20261022f">
-<link rel="stylesheet" href="css/app.css?v=20261022f">
-<link rel="stylesheet" href="css/depth.css?v=20261022f">
-<link rel="stylesheet" href="css/analytics.css?v=20261022f">
+<link rel="stylesheet" href="css/variables.css?v=20261022g">
+<link rel="stylesheet" href="css/base.css?v=20261022g">
+<link rel="stylesheet" href="css/layout.css?v=20261022g">
+<link rel="stylesheet" href="css/components.css?v=20261022g">
+<link rel="stylesheet" href="css/hero.css?v=20261022g">
+<link rel="stylesheet" href="css/pages.css?v=20261022g">
+<link rel="stylesheet" href="css/app.css?v=20261022g">
+<link rel="stylesheet" href="css/depth.css?v=20261022g">
+<link rel="stylesheet" href="css/analytics.css?v=20261022g">
 <meta name="robots" content="noindex, nofollow">
 </head>
 <body>
@@ -91,7 +91,7 @@
 
       <div id="adminPanel" hidden>
         <div class="admin-tabs">
-          <button type="button" class="admin-tab active" data-tab="orders">Orders</button>
+          <button type="button" class="admin-tab active" data-tab="orders">Orders <span class="admin-tab-badge" id="ordersNewBadge" hidden></span></button>
           <button type="button" class="admin-tab" data-tab="projects">Projects</button>
           <button type="button" class="admin-tab" data-tab="analytics">Analytics</button>
         </div>
@@ -105,8 +105,10 @@
           </div>
 
           <div class="admin-toolbar">
+            <div class="admin-toolbar-group">
+            <input type="search" id="orderSearch" class="admin-search" placeholder="Search name, email, details…" aria-label="Search orders">
             <label style="display:flex; align-items:center; gap:10px; font-size:13.5px; color:var(--text-lo);">
-              Filter by status
+              Status
               <select id="statusFilter">
                 <option value="all">All</option>
                 <option value="new">New</option>
@@ -116,7 +118,11 @@
                 <option value="archived">Archived</option>
               </select>
             </label>
-            <button type="button" class="btn-secondary" id="adminLogoutBtn">Log out</button>
+            </div>
+            <div class="admin-toolbar-group">
+              <button type="button" class="btn-secondary" id="exportOrdersBtn">Export CSV</button>
+              <button type="button" class="btn-secondary" id="adminLogoutBtn">Log out</button>
+            </div>
           </div>
 
           <div class="orders-list" id="ordersList"></div>
@@ -299,13 +305,13 @@
   </div>
 </footer>
 
-<script src="js/nav.js?v=20261022f"></script>
-<script src="js/reveal.js?v=20261022f"></script>
-<script src="js/tilt.js?v=20261022f"></script>
-<script src="js/interact.js?v=20261022f"></script>
-  <script src="js/depth.js?v=20261022f"></script>
-<script type="module" src="js/auth.js?v=20261022f"></script>
-<script type="module" src="js/admin.js?v=20261022f"></script>
+<script src="js/nav.js?v=20261022g"></script>
+<script src="js/reveal.js?v=20261022g"></script>
+<script src="js/tilt.js?v=20261022g"></script>
+<script src="js/interact.js?v=20261022g"></script>
+  <script src="js/depth.js?v=20261022g"></script>
+<script type="module" src="js/auth.js?v=20261022g"></script>
+<script type="module" src="js/admin.js?v=20261022g"></script>
 
 </body>
 </html>

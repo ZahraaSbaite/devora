@@ -1,0 +1,19 @@
+# Netlify security headers for every page and file.
+# Content-Security-Policy: scripts only from this site, Google's Firebase SDK
+# host and jsDelivr (three.js, EmailJS); data only to Firebase and EmailJS;
+# no other site may frame these pages (stops clickjacking on admin.html).
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://www.gstatic.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://api.emailjs.com; frame-src https://devora-2fcfa.firebaseapp.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Cross-Origin-Opener-Policy: same-origin-allow-popups
+
+# Firebase config and rules are public by design, but nobody needs the
+# rules file or README served from the website.
+/firestore.rules
+  X-Robots-Tag: noindex
+/README.md
+  X-Robots-Tag: noindex
