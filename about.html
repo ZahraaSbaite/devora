@@ -40,6 +40,7 @@
   <link rel="stylesheet" href="css/pages.css">
   <link rel="stylesheet" href="css/app.css">
   <link rel="stylesheet" href="css/depth.css">
+  <link rel="stylesheet" href="css/bands.css">
 </head>
 
 <body>
@@ -205,14 +206,10 @@
       </div>
     </section>
 
-    <section id="principles">
+    <section class="band band--celadon" id="principles">
       <div class="wrap">
-        <div class="section-head reveal">
-          <div>
-            <span class="kicker">How we work</span>
-            <h2>Four things that never change.</h2>
-          </div>
-        </div>
+        <div class="band-head"><span>01. How we work</span><span>#b9f0d7</span><span>Never changes</span></div>
+        <div class="band-title reveal"><h2>Four things that never change.</h2></div>
         <div class="principles">
           <div class="principle tilt-card reveal"><span class="principle-num">01</span><b>1:1</b><span>Direct with the developer, no account managers</span></div>
           <div class="principle tilt-card reveal"><span class="principle-num">02</span><b>Fixed</b><span>Price agreed before work begins</span></div>
@@ -222,18 +219,16 @@
       </div>
     </section>
 
-    <section id="cta">
-      <div class="wrap">
-        <div class="tilt-card reveal"
-          style="padding:56px; display:flex; align-items:center; justify-content:space-between; gap:32px; flex-wrap:wrap;">
-          <div>
-            <span class="kicker">Like how we work?</span>
-            <h2 style="font-size:clamp(24px,3vw,34px); font-weight:600;">Tell us what you're building.</h2>
-          </div>
-          <a href="contact.html" class="btn-primary">Place an order →</a>
-        </div>
+  <section class="band band--black band-cta">
+    <div class="wrap">
+      <div class="band-head"><span>02. Start a project</span><span>#0c0c16</span><span>Reply within 1–2 business days</span></div>
+      <h2 class="reveal">Like how we work? <em>Tell us</em> what you're building.</h2>
+      <div class="band-foot reveal">
+        <a href="contact.html" class="btn-primary">Place an order →</a>
+        <a href="faq.html" class="btn-secondary">Read the FAQ</a>
       </div>
-    </section>
+    </div>
+  </section>
 
   </main>
 
@@ -306,6 +301,7 @@
   <script src="js/tilt.js"></script>
 <script src="js/interact.js"></script>
   <script src="js/depth.js"></script>
+  <script src="js/bands.js"></script>
   <script src="js/badges.js"></script>
   <script type="module" src="js/hero-scene.js"></script>
   <script type="module" src="js/auth.js"></script>

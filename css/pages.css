@@ -296,7 +296,7 @@
   cursor:grab;
   overflow:hidden;
 }
-[data-theme="light"] .badge{box-shadow:0 40px 70px -34px rgba(60,40,10,0.35);}
+[data-theme="light"] .badge{box-shadow:0 40px 70px -34px rgba(20,30,70,0.35);}
 .badge-clip{
   position:absolute;
   top:12px; left:50%;

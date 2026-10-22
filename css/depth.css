@@ -89,7 +89,7 @@ main h2{line-height:1.1;}
   box-shadow:
     0 0 0 1px rgba(85,82,201,0.14),
     0 30px 60px -24px rgba(85,82,201,0.30),
-    0 18px 36px -20px rgba(60,40,10,0.18);
+    0 18px 36px -20px rgba(20,30,70,0.18);
 }
 .service-icon, .why-icon, .tech-glyph, .timeline-dot, .team-avatar{
   transition:transform .35s var(--ease), box-shadow .35s ease;
