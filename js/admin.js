@@ -182,13 +182,21 @@ if(statusFilter) statusFilter.addEventListener('change', render);
 // ---------------------------------------------------------------------
 function wireTabs(){
   const tabs = document.querySelectorAll('.admin-tab');
-  const panels = { orders: document.getElementById('tabOrders'), projects: document.getElementById('tabProjects') };
+  const panels = {
+    orders: document.getElementById('tabOrders'),
+    projects: document.getElementById('tabProjects'),
+    analytics: document.getElementById('tabAnalytics')
+  };
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
       tabs.forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
       const target = tab.dataset.tab;
       Object.entries(panels).forEach(([key, el]) => { if(el) el.hidden = key !== target; });
+      // the analytics code and its data load only when the tab is opened
+      if(target === 'analytics'){
+        import('./admin-analytics.js').then(m => m.initAnalytics(panels.analytics));
+      }
     });
   });
 }

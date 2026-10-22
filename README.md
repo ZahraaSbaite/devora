@@ -76,7 +76,7 @@ Cloudflare Pages, etc). Supabase is the backend; no server code to deploy.
 ## What's in the admin dashboard
 
 Open `admin.html` (or click your account menu → "Admin dashboard" once
-logged in) to get two tabs:
+logged in) to get three tabs:
 
 - **Orders** — every brief submitted through `contact.html`, in real time,
   with status filtering (New / Contacted / In progress / Completed /
@@ -88,6 +88,17 @@ logged in) to get two tabs:
   immediately on `portfolio.html` under the matching filter pill, and the 3
   most recent show up in the home page's portfolio teaser. Edit or delete
   any project from the same list.
+- **Analytics** — visits, page views, orders and conversion rate for the
+  last 7 / 30 / 90 days (each compared with the period before), daily
+  traffic, top pages, traffic sources, devices, the most-clicked buttons and
+  project links, and orders by status and project type. Every chart has a
+  "View as table" option.
+
+  **One-time setup:** in Supabase → SQL Editor, run the whole of
+  `supabase/analytics.sql`. That creates the `analytics_events` table that
+  `js/track.js` writes to. Visits are anonymous (no cookies, no IP address,
+  nothing personal), aren't recorded when the site runs on localhost, and
+  respect the browser's Do Not Track setting.
 
 Only accounts you've marked as admins can see this page — everyone else is
 redirected to log in.
