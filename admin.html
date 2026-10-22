@@ -17,15 +17,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/variables.css?v=20261022e">
-<link rel="stylesheet" href="css/base.css?v=20261022e">
-<link rel="stylesheet" href="css/layout.css?v=20261022e">
-<link rel="stylesheet" href="css/components.css?v=20261022e">
-<link rel="stylesheet" href="css/hero.css?v=20261022e">
-<link rel="stylesheet" href="css/pages.css?v=20261022e">
-<link rel="stylesheet" href="css/app.css?v=20261022e">
-<link rel="stylesheet" href="css/depth.css?v=20261022e">
-<link rel="stylesheet" href="css/analytics.css?v=20261022e">
+<link rel="stylesheet" href="css/variables.css?v=20261022f">
+<link rel="stylesheet" href="css/base.css?v=20261022f">
+<link rel="stylesheet" href="css/layout.css?v=20261022f">
+<link rel="stylesheet" href="css/components.css?v=20261022f">
+<link rel="stylesheet" href="css/hero.css?v=20261022f">
+<link rel="stylesheet" href="css/pages.css?v=20261022f">
+<link rel="stylesheet" href="css/app.css?v=20261022f">
+<link rel="stylesheet" href="css/depth.css?v=20261022f">
+<link rel="stylesheet" href="css/analytics.css?v=20261022f">
 <meta name="robots" content="noindex, nofollow">
 </head>
 <body>
@@ -205,6 +205,36 @@
                 <p class="an-sub">Visits and page views per day. A visit is one browser tab session.</p>
                 <div id="anTraffic"></div>
               </section>
+              <section class="an-card an-wide">
+                <h3>Order funnel</h3>
+                <p class="an-sub">Visits that reached each step. A visit is one browser tab session.</p>
+                <div id="anFunnel"></div>
+              </section>
+              <section class="an-card an-wide">
+                <h3>Campaigns</h3>
+                <p class="an-sub">Visits that arrived through a tagged link, and what they did next</p>
+                <div id="anCampaigns"></div>
+                <div class="an-builder">
+                  <span class="an-builder-title">Make a tagged link</span>
+                  <p class="an-sub">Use it in your Instagram bio, a post or a story, then watch it here.</p>
+                  <div class="an-builder-row">
+                    <label>Page
+                      <select id="anLinkPage">
+                        <option value="">Home</option>
+                        <option value="portfolio.html">Portfolio</option>
+                        <option value="services.html">Services</option>
+                        <option value="contact.html">Contact</option>
+                      </select>
+                    </label>
+                    <label>Source<input type="text" id="anLinkSource" value="instagram" maxlength="40"></label>
+                    <label>Campaign<input type="text" id="anLinkCampaign" placeholder="e.g. bio, reel-oct" maxlength="40"></label>
+                  </div>
+                  <div class="an-builder-out">
+                    <input type="text" id="anLinkOut" readonly aria-label="Tagged link">
+                    <button type="button" class="an-range" id="anLinkCopy">Copy link</button>
+                  </div>
+                </div>
+              </section>
               <section class="an-card">
                 <h3>Top pages</h3>
                 <p class="an-sub">Page views</p>
@@ -269,13 +299,13 @@
   </div>
 </footer>
 
-<script src="js/nav.js?v=20261022e"></script>
-<script src="js/reveal.js?v=20261022e"></script>
-<script src="js/tilt.js?v=20261022e"></script>
-<script src="js/interact.js?v=20261022e"></script>
-  <script src="js/depth.js?v=20261022e"></script>
-<script type="module" src="js/auth.js?v=20261022e"></script>
-<script type="module" src="js/admin.js?v=20261022e"></script>
+<script src="js/nav.js?v=20261022f"></script>
+<script src="js/reveal.js?v=20261022f"></script>
+<script src="js/tilt.js?v=20261022f"></script>
+<script src="js/interact.js?v=20261022f"></script>
+  <script src="js/depth.js?v=20261022f"></script>
+<script type="module" src="js/auth.js?v=20261022f"></script>
+<script type="module" src="js/admin.js?v=20261022f"></script>
 
 </body>
 </html>

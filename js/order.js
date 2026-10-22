@@ -48,6 +48,8 @@ if(form){
       // a visitor shouldn't see internal setup details), so this is only
       // logged to the console for the site owner.
       sendOrderNotification(data);
+      // lets the anonymous analytics count a completed order form (js/track.js)
+      window.dispatchEvent(new CustomEvent('devora:track', { detail: { type: 'form_submit' } }));
 
       form.reset();
       status.textContent = 'Order submitted — I\'ll reply within 1–2 business days.';

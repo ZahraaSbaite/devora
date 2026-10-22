@@ -8,10 +8,12 @@ import { getFirebase, docToObject } from './firebase-config.js';
 const SVG = 'http://www.w3.org/2000/svg';
 const DAY = 86400000;
 const PAGE_NAMES = {
-  '/': 'Home', '/about.html': 'About', '/services.html': 'Services',
-  '/portfolio.html': 'Portfolio', '/process.html': 'Process', '/faq.html': 'FAQ',
-  '/contact.html': 'Contact', '/privacy.html': 'Privacy', '/terms.html': 'Terms'
+  '/': 'Home', '/about': 'About', '/services': 'Services', '/portfolio': 'Portfolio',
+  '/process': 'Process', '/faq': 'FAQ', '/contact': 'Contact', '/privacy': 'Privacy', '/terms': 'Terms'
 };
+// "/contact.html" and "/contact" are the same page
+const pageKey = path => (path || '/').replace(/\.html$/, '') || '/';
+const pageName = path => PAGE_NAMES[pageKey(path)] || path;
 const STATUS_ORDER = [
   ['new', 'New'], ['contacted', 'Contacted'], ['in_progress', 'In progress'],
   ['completed', 'Completed'], ['archived', 'Archived']
@@ -34,6 +36,7 @@ export function initAnalytics(container){
     });
   });
   root.querySelector('#anRefresh').addEventListener('click', refresh);
+  wireLinkBuilder();
 
   let resizeTimer;
   window.addEventListener('resize', () => {
@@ -132,7 +135,40 @@ function draw({ events, orders, start, prevStart }){
     { name: 'Visits', color: 'var(--series-2)', values: dailyVisits }
   ]);
 
-  hbar(root.querySelector('#anPages'), top(countBy(curViews, v => PAGE_NAMES[v.path] || v.path), 8), 'Page views');
+  // ---- order funnel: how many visits reached each step ----
+  const curEvents = events.filter(inCur);
+  const visitsWhere = test => new Set(curEvents.filter(test).map(e => e.session_id));
+  const sVisits = new Set(curViews.map(v => v.session_id));
+  const sContact = visitsWhere(e => e.type === 'pageview' && pageKey(e.path) === '/contact');
+  const sStarted = visitsWhere(e => e.type === 'form_start');
+  const sSent = visitsWhere(e => e.type === 'form_submit');
+  funnel(root.querySelector('#anFunnel'), [
+    { label: 'Visited the site', value: sVisits.size },
+    { label: 'Saw the Contact page', value: sContact.size },
+    { label: 'Started the order form', value: sStarted.size },
+    { label: 'Sent an order', value: sSent.size }
+  ]);
+
+  // ---- campaigns: tags come from the visit's landing page view ----
+  const groups = new Map();
+  curViews.forEach(v => {
+    if(!v.utm_source) return;
+    const key = v.utm_source + '\u0000' + (v.utm_campaign || '');
+    if(!groups.has(key)) groups.set(key, { source: v.utm_source, campaign: v.utm_campaign || '—', visits: new Set() });
+    groups.get(key).visits.add(v.session_id);
+  });
+  const campaignRows = [...groups.values()]
+    .sort((a, b) => b.visits.size - a.visits.size)
+    .map(g => {
+      const ids = [...g.visits];
+      const started = ids.filter(id => sStarted.has(id)).length;
+      const sent = ids.filter(id => sSent.has(id)).length;
+      return [g.source, g.campaign, fmt(ids.length), fmt(started), fmt(sent), pct(sent, ids.length)];
+    });
+  table(root.querySelector('#anCampaigns'), ['Source', 'Campaign', 'Visits', 'Started form', 'Sent order', 'Conversion'],
+    campaignRows, 'No tagged visits yet — make a link below and use it on Instagram.');
+
+  hbar(root.querySelector('#anPages'), top(countBy(curViews, v => pageName(v.path)), 8), 'Page views');
 
   // a visit's source is the referrer on its first page view
   const firstView = new Map();
@@ -266,6 +302,38 @@ function lineChart(host, days, series){
     days.map((d, i) => [longDate(d), ...series.map(s => fmt(s.values[i]))])));
 }
 
+function funnel(host, steps){
+  host.replaceChildren();
+  const top = steps[0].value;
+  if(!top){ host.append(el('p', { class: 'an-empty' }, 'Nothing recorded in this period.')); return; }
+  const list = el('div', { class: 'an-bars an-funnel' });
+  steps.forEach((s, i) => {
+    const prev = i ? steps[i - 1].value : null;
+    const row = el('div', { class: 'an-bar-row', tabindex: '0' });
+    const label = el('span', { class: 'an-bar-label', title: s.label }, s.label);
+    const track = el('span', { class: 'an-bar-track' });
+    track.append(
+      el('span', { class: 'an-bar', style: `width:${s.value / top * 100}%` }),
+      el('span', { class: 'an-bar-value' }, fmt(s.value)),
+      el('span', { class: 'an-funnel-pct' }, i ? `${pct(s.value, prev)} of previous step` : ''));
+    row.append(label, track);
+    const tip = e => {
+      const rect = row.getBoundingClientRect();
+      const rows = [{ name: 'Visits', value: fmt(s.value), color: 'var(--series-1)' }];
+      if(i) rows.push({ name: 'of previous step', value: pct(s.value, prev), color: 'var(--series-1)' },
+                      { name: 'of all visits', value: pct(s.value, top), color: 'var(--series-1)' });
+      showTooltip(s.label, rows, e && e.clientX ? e.clientX : rect.left + rect.width / 2, e && e.clientY ? e.clientY : rect.top);
+    };
+    row.addEventListener('pointermove', tip);
+    row.addEventListener('focus', () => tip());
+    row.addEventListener('pointerleave', hideTooltip);
+    row.addEventListener('blur', hideTooltip);
+    list.append(row);
+  });
+  host.append(list, tableView(['Step', 'Visits', 'Of all visits', 'Of previous step'],
+    steps.map((s, i) => [s.label, fmt(s.value), pct(s.value, top), i ? pct(s.value, steps[i - 1].value) : '—'])));
+}
+
 function hbar(host, rows, valueName, { keepZero = false } = {}){
   host.replaceChildren();
   rows = keepZero ? rows : rows.filter(r => r.value > 0);
@@ -335,17 +403,47 @@ function tableView(head, rows){
 
 function buildTable(head, rows){
   const t = el('table', { class: 'an-table' });
+  // right-align a column only when every value in it is a number or percentage
+  const numeric = head.map((h, i) => i > 0 && rows.every(r => /^[\d.,]+[%KM]?$|^—$/.test(String(r[i]).trim())));
   const thead = el('thead'), tr = el('tr');
-  head.forEach((h, i) => tr.append(el('th', i ? { class: 'num' } : {}, h)));
+  head.forEach((h, i) => tr.append(el('th', numeric[i] ? { class: 'num' } : {}, h)));
   thead.append(tr);
   const tbody = el('tbody');
   rows.forEach(r => {
     const row = el('tr');
-    r.forEach((c, i) => row.append(el('td', i ? { class: 'num' } : {}, c)));
+    r.forEach((c, i) => row.append(el('td', numeric[i] ? { class: 'num' } : {}, c)));
     tbody.append(row);
   });
   t.append(thead, tbody);
   return t;
+}
+
+// ---------------------------------------------------------------------
+// Tagged-link builder (same cleaning rules as js/track.js)
+// ---------------------------------------------------------------------
+function wireLinkBuilder(){
+  const page = root.querySelector('#anLinkPage');
+  const source = root.querySelector('#anLinkSource');
+  const campaign = root.querySelector('#anLinkCampaign');
+  const out = root.querySelector('#anLinkOut');
+  const copy = root.querySelector('#anLinkCopy');
+  const slug = v => v.toLowerCase().trim().replace(/[^a-z0-9._-]+/g, '-').slice(0, 60);
+  const base = location.origin + location.pathname.replace(/admin(\.html)?$/, '');
+  const update = () => {
+    const params = new URLSearchParams();
+    if(slug(source.value)) params.set('utm_source', slug(source.value));
+    if(slug(campaign.value)) params.set('utm_campaign', slug(campaign.value));
+    const qs = params.toString();
+    out.value = base + page.value + (qs ? '?' + qs : '');
+  };
+  [page, source, campaign].forEach(input => input.addEventListener('input', update));
+  copy.addEventListener('click', async () => {
+    try{ await navigator.clipboard.writeText(out.value); }
+    catch(err){ out.select(); document.execCommand('copy'); }
+    copy.textContent = 'Copied';
+    setTimeout(() => { copy.textContent = 'Copy link'; }, 1500);
+  });
+  update();
 }
 
 // ---------------------------------------------------------------------

@@ -65,12 +65,16 @@ service cloud.firestore {
     // ---- analytics_events: anonymous visit tracking (js/track.js) ----
     match /analytics_events/{eventId} {
       allow create: if request.resource.data.keys().hasOnly(
-          ['type', 'path', 'label', 'referrer', 'session_id', 'device', 'created_at'])
-        && request.resource.data.type in ['pageview', 'click']
+          ['type', 'path', 'label', 'referrer', 'session_id', 'device', 'created_at',
+           'utm_source', 'utm_medium', 'utm_campaign'])
+        && request.resource.data.type in ['pageview', 'click', 'form_start', 'form_submit']
         && request.resource.data.path is string
         && request.resource.data.path.size() > 0 && request.resource.data.path.size() <= 200
         && optionalString(request.resource.data, 'label', 120)
         && optionalString(request.resource.data, 'referrer', 120)
+        && optionalString(request.resource.data, 'utm_source', 60)
+        && optionalString(request.resource.data, 'utm_medium', 60)
+        && optionalString(request.resource.data, 'utm_campaign', 60)
         && request.resource.data.session_id is string
         && request.resource.data.session_id.size() >= 8 && request.resource.data.session_id.size() <= 64
         && request.resource.data.device in ['mobile', 'tablet', 'desktop']
