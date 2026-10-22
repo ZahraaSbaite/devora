@@ -1,11 +1,62 @@
-// WebGL scene behind the home hero: glossy shapes in the brand colors that
-// float, follow the mouse, grow on hover and spin when clicked.
+// WebGL scenes of glossy brand-colored shapes that float, follow the mouse,
+// grow on hover and spin when clicked. Used full-screen behind the home hero
+// (#heroScene) and as a small cluster in each inner page header (.page-scene).
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js';
 
-const canvas = document.getElementById('heroScene');
-if(canvas) init();
+// [geometry factory, color, position, scale]
+const HERO_SPECS = () => [
+  [new THREE.TorusKnotGeometry(0.7, 0.24, 160, 24), 0x6666ff, [ 4.6,  2.0, -1.5], 0.8],
+  [new THREE.IcosahedronGeometry(0.9, 0),          0xb8baff, [-5.4, -1.2, -0.5], 0.75],
+  [new THREE.TorusGeometry(0.7, 0.26, 32, 80),     0xb9f0d7, [-4.4,  2.1, -2.0], 0.8],
+  [new THREE.SphereGeometry(0.62, 48, 48),         0xc9e8ff, [ 5.2, -0.9,  0.0], 0.8],
+  [new THREE.OctahedronGeometry(0.55, 0),          0x6666ff, [-1.2,  3.4, -3.0], 0.7],
+  [new THREE.DodecahedronGeometry(0.45, 0),        0xb9f0d7, [ 1.4,  3.4, -3.5], 0.8],
+  [new THREE.SphereGeometry(0.16, 32, 32),         0x6666ff, [-3.0,  0.4,  2.0], 1.0]
+];
 
-function init(){
+// One trio per inner page, picked with data-set="0..5" on the canvas.
+const HEADER_SETS = [
+  () => [ // about
+    [new THREE.SphereGeometry(0.9, 48, 48),          0xb8baff, [ 0.6,  0.4,  0.0], 1],
+    [new THREE.TorusGeometry(0.75, 0.24, 32, 80),    0xb9f0d7, [-1.9, -0.9, -1.0], 1],
+    [new THREE.OctahedronGeometry(0.4, 0),           0x6666ff, [ 2.4, -1.3,  0.8], 1]
+  ],
+  () => [ // services
+    [new THREE.TorusKnotGeometry(0.62, 0.21, 160, 24), 0x6666ff, [ 0.4,  0.3,  0.0], 1],
+    [new THREE.IcosahedronGeometry(0.6, 0),          0xc9e8ff, [-2.1, -1.0, -0.8], 1],
+    [new THREE.SphereGeometry(0.3, 32, 32),          0xb9f0d7, [ 2.3,  1.3,  0.6], 1]
+  ],
+  () => [ // portfolio
+    [new THREE.BoxGeometry(1.2, 1.2, 1.2, 1, 1, 1),  0xb8baff, [ 0.3,  0.2,  0.0], 1],
+    [new THREE.TorusGeometry(0.6, 0.2, 32, 80),      0x6666ff, [ 2.3, -1.0,  0.4], 1],
+    [new THREE.DodecahedronGeometry(0.5, 0),         0xb9f0d7, [-2.0,  1.1, -1.0], 1]
+  ],
+  () => [ // process
+    [new THREE.TorusGeometry(0.85, 0.22, 32, 100),   0xb9f0d7, [ 0.0,  0.2,  0.0], 1],
+    [new THREE.SphereGeometry(0.42, 48, 48),         0x6666ff, [ 0.0,  0.2,  0.0], 1],
+    [new THREE.OctahedronGeometry(0.45, 0),          0xc9e8ff, [-2.3, -1.1, -0.5], 1]
+  ],
+  () => [ // faq
+    [new THREE.IcosahedronGeometry(0.85, 0),         0xb8baff, [ 0.4,  0.1,  0.0], 1],
+    [new THREE.SphereGeometry(0.35, 32, 32),         0xb9f0d7, [-2.0,  1.0,  0.4], 1],
+    [new THREE.TorusGeometry(0.45, 0.16, 32, 80),    0x6666ff, [ 2.2, -1.2, -0.6], 1]
+  ],
+  () => [ // contact
+    [new THREE.TorusKnotGeometry(0.55, 0.18, 160, 24, 3, 5), 0xb9f0d7, [ 0.3,  0.2,  0.0], 1],
+    [new THREE.SphereGeometry(0.5, 48, 48),          0x6666ff, [-2.1, -0.9, -0.5], 1],
+    [new THREE.OctahedronGeometry(0.35, 0),          0xb8baff, [ 2.2,  1.2,  0.5], 1]
+  ]
+];
+
+const heroCanvas = document.getElementById('heroScene');
+if(heroCanvas) init(heroCanvas, HERO_SPECS(), true);
+document.querySelectorAll('canvas.page-scene').forEach(c => {
+  const set = HEADER_SETS[Number(c.dataset.set) || 0] || HEADER_SETS[0];
+  init(c, set(), false);
+});
+
+function init(canvas, specs, isHero){
+  if(!canvas.offsetWidth) return; // hidden (header scenes are off on small screens)
   let renderer;
   try{
     renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true, powerPreference:'high-performance' });
@@ -35,20 +86,11 @@ function init(){
     color, roughness:0.22, metalness:0.15, clearcoat:1, clearcoatRoughness:0.12
   });
 
-  // [geometry, color, position, scale]
-  const specs = [
-    [new THREE.TorusKnotGeometry(0.7, 0.24, 160, 24), 0x6666ff, [ 4.6,  2.0, -1.5], 0.8],
-    [new THREE.IcosahedronGeometry(0.9, 0),          0xb8baff, [-5.4, -1.2, -0.5], 0.75],
-    [new THREE.TorusGeometry(0.7, 0.26, 32, 80),     0xb9f0d7, [-4.4,  2.1, -2.0], 0.8],
-    [new THREE.SphereGeometry(0.62, 48, 48),         0xc9e8ff, [ 5.2, -0.9,  0.0], 0.8],
-    [new THREE.OctahedronGeometry(0.55, 0),          0x6666ff, [-1.2,  3.4, -3.0], 0.7],
-    [new THREE.DodecahedronGeometry(0.45, 0),        0xb9f0d7, [ 1.4,  3.4, -3.5], 0.8],
-    [new THREE.SphereGeometry(0.16, 32, 32),         0x6666ff, [-3.0,  0.4,  2.0], 1.0]
-  ];
 
   const shapes = specs.map(([geo, color, pos, scale], i) => {
     const mesh = new THREE.Mesh(geo, material(color));
     mesh.position.set(...pos);
+    mesh.rotation.set(0.6 + i * 0.9, 0.8 + i * 1.3, i * 0.4); // start at an angle so flat faces read as 3D
     mesh.userData = {
       home: new THREE.Vector3(...pos),
       baseScale: scale,
@@ -71,16 +113,18 @@ function init(){
     spread = Math.min(1, camera.aspect / 1.6);
     // half the visible width at z=0
     const halfW = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.position.z * camera.aspect;
-    const portrait = camera.aspect < 1.1;
+    const portrait = isHero && camera.aspect < 1.1;
     shapes.forEach(m => {
       const u = m.userData;
       if(portrait){
         // tall screens: small shapes peeking in from the side edges
         u.scale = u.baseScale * (camera.aspect < 0.7 ? 0.38 : 0.5);
         m.position.x = Math.sign(u.home.x) * halfW * 0.95;
-      }else{
+      }else if(isHero){
         u.scale = u.baseScale * (0.6 + 0.4 * spread);
         m.position.x = u.home.x * spread;
+      }else{
+        u.scale = u.baseScale;
       }
     });
   }
@@ -137,8 +181,8 @@ function init(){
       m.rotation.x += (u.spin.x + u.boost) * dt;
       m.rotation.y += (u.spin.y + u.boost * 0.6) * dt;
       // float, and drift apart as the page scrolls
-      m.position.y = u.home.y * (1 + scrollY * 0.5) + Math.sin(t * 0.8 + u.phase) * 0.18;
-      m.position.z = u.home.z + scrollY * 2;
+      m.position.y = u.home.y * (1 + scrollY * (isHero ? 0.5 : 0.2)) + Math.sin(t * 0.8 + u.phase) * 0.18;
+      m.position.z = u.home.z + scrollY * (isHero ? 2 : 1);
       u.punch = (u.punch || 0) * 0.9;
       const s = u.scale * (m === hovered ? 1.15 : 1) * (1 + u.punch * 0.25);
       m.scale.setScalar(m.scale.x + (s - m.scale.x) * 0.15);
