@@ -49,12 +49,22 @@ export async function fetchProjects(){
 // admin panel are shown alongside these.
 export const FEATURED_PROJECTS = [
   {
+    id: 'featured-strand-crochet',
+    title: 'Strand',
+    category: 'websites',
+    description: 'Online shop for a handmade crochet studio — product catalog, cart and checkout, order tracking, custom commission requests, and an admin studio that runs the whole site.',
+    tags: ['E-commerce', 'React', 'Admin dashboard'],
+    imageUrl: 'assets/work/strand-crochet.jpg',
+    liveUrl: 'https://strand-crochet.vercel.app/',
+    caseStudyUrl: ''
+  },
+  {
     id: 'featured-abs-fragrances',
     title: 'ABS Fragrances',
     category: 'websites',
     description: 'E-commerce storefront for a Lebanese retailer of original UAE perfumes — browse by collection and gender, build a cart, and order straight through WhatsApp.',
     tags: ['E-commerce', 'Shopping cart', 'WhatsApp ordering'],
-    imageUrl: 'assets/work/abs-fragrances.png',
+    imageUrl: 'assets/work/abs-fragrances.jpg',
     liveUrl: 'https://abs-fragrances.com',
     caseStudyUrl: ''
   },
@@ -64,7 +74,7 @@ export const FEATURED_PROJECTS = [
     category: 'websites',
     description: 'Website for a Beirut beauty clinic — treatment menus with pricing, a before & after gallery, client reviews, and appointment booking.',
     tags: ['Booking', 'Service menu', 'Gallery'],
-    imageUrl: 'assets/work/glowvie.png',
+    imageUrl: 'assets/work/glowvie.jpg',
     liveUrl: 'https://glowvie-one.vercel.app/',
     caseStudyUrl: ''
   },
@@ -74,7 +84,7 @@ export const FEATURED_PROJECTS = [
     category: 'websites',
     description: 'Site for a luxury travel agency in Beirut and Abidjan — tailored trips, visas, VIP airport services, and spiritual travel packages.',
     tags: ['Travel', 'Lead generation', 'WhatsApp'],
-    imageUrl: 'assets/work/ezz-travel.png',
+    imageUrl: 'assets/work/ezz-travel.jpg',
     liveUrl: 'https://www.ezztravel.agency/',
     caseStudyUrl: ''
   }
