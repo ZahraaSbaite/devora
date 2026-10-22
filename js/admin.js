@@ -1,6 +1,6 @@
 import { getFirebase, isConfigured, docToObject } from './firebase-config.js';
 import { onAuthReady, isAdmin, logout } from './auth.js';
-import { CATEGORY_LABELS, escapeHtml } from './projects.js';
+import { CATEGORY_LABELS, escapeHtml, FEATURED_PROJECTS, normalizeUrl } from './projects.js';
 
 const gate = document.getElementById('adminGate');
 const panel = document.getElementById('adminPanel');
@@ -206,6 +206,8 @@ function wireProjectForm(){
   if(newProjectBtn){
     newProjectBtn.addEventListener('click', () => openProjectForm());
   }
+  const importBtn = document.getElementById('importProjectsBtn');
+  if(importBtn) importBtn.addEventListener('click', importFeatured);
   if(projectCancelBtn){
     projectCancelBtn.addEventListener('click', () => closeProjectForm());
   }
@@ -309,8 +311,59 @@ async function streamProjects(){
   }
 }
 
+// Built-in portfolio projects that aren't in the database yet.
+function missingFeatured(){
+  const have = new Set(allProjects.map(p => normalizeUrl(p.live_url)).filter(Boolean));
+  return FEATURED_PROJECTS.filter(f => !have.has(normalizeUrl(f.liveUrl)));
+}
+
+function renderImportBanner(){
+  const box = document.getElementById('projectsImport');
+  if(!box) return;
+  // only before the first import: once any of them is in the database,
+  // deleting one is a deliberate choice, not something to nag about
+  const missing = missingFeatured();
+  box.hidden = missing.length < FEATURED_PROJECTS.length;
+  if(box.hidden) return;
+  document.getElementById('projectsImportText').textContent =
+    `${missing.length === FEATURED_PROJECTS.length ? 'Your' : missing.length} portfolio project${missing.length === 1 ? '' : 's'} ` +
+    `(${missing.map(m => m.title).join(', ')}) ${missing.length === 1 ? "isn't" : "aren't"} in the database yet, ` +
+    `so ${missing.length === 1 ? 'it' : 'they'} can't be edited here. Import once to manage everything from this list.`;
+}
+
+async function importFeatured(){
+  const btn = document.getElementById('importProjectsBtn');
+  const missing = missingFeatured();
+  if(!missing.length) return;
+  btn.disabled = true;
+  btn.textContent = 'Importing…';
+  try{
+    const { db, fs } = await getFirebase();
+    // oldest first, so the first project in the list ends up newest (on top)
+    for(const p of [...missing].reverse()){
+      await fs.addDoc(fs.collection(db, 'projects'), {
+        title: p.title,
+        category: p.category,
+        description: p.description || '',
+        tags: p.tags || [],
+        image_url: p.imageUrl || '',
+        live_url: p.liveUrl || '',
+        case_study_url: p.caseStudyUrl || '',
+        created_at: fs.serverTimestamp()
+      });
+    }
+  }catch(err){
+    console.error('Import failed:', err);
+    alert("Couldn't import the projects — please try again.");
+  }finally{
+    btn.disabled = false;
+    btn.textContent = 'Import them';
+  }
+}
+
 function renderProjects(){
   if(!projectsList) return;
+  renderImportBanner();
   projectsList.innerHTML = '';
 
   if(!allProjects.length){

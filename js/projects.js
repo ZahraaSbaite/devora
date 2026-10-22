@@ -40,9 +40,10 @@ export async function fetchProjects(){
   }
 }
 
-// Shipped client work that always appears on the site, even if Firebase is
-// unreachable or the projects collection is empty. Projects added through the
-// admin panel are shown alongside these.
+// The studio's client work. Shown on the site only as a fallback, while the
+// Firestore projects collection is empty or unreachable; the admin Projects
+// tab offers a one-click import of these, after which the database is the
+// single source of truth (edit or delete them there).
 export const FEATURED_PROJECTS = [
   {
     id: 'featured-strand-crochet',
@@ -90,9 +91,12 @@ export const FEATURED_PROJECTS = [
 // skipping any featured entry the admin has already added with the same URL.
 export async function loadAllProjects(){
   const remote = await fetchProjects();
-  const norm = url => (url || '').replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '').toLowerCase();
-  const seen = new Set(remote.map(p => norm(p.liveUrl)).filter(Boolean));
-  return [...remote, ...FEATURED_PROJECTS.filter(p => !seen.has(norm(p.liveUrl)))];
+  return remote.length ? remote : FEATURED_PROJECTS;
+}
+
+// Same site regardless of http/https, www or a trailing slash.
+export function normalizeUrl(url){
+  return (url || '').replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '').toLowerCase();
 }
 
 export function escapeHtml(str){
