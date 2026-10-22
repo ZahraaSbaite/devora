@@ -2,13 +2,6 @@
 <html lang="en" data-theme="dark">
 
 <head>
-  <script>
-    (function () {
-      var saved = localStorage.getItem('devora-theme');
-      var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-      document.documentElement.setAttribute('data-theme', theme);
-    })();
-  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Portfolio — Devora</title>
@@ -58,18 +51,6 @@
         <a href="contact.html">Contact</a>
       </nav>
       <div class="nav-right">
-        <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to light theme">
-          <svg class="moon" viewBox="0 0 24 24" fill="none">
-            <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" stroke="#b8baff" stroke-width="1.6"
-              stroke-linejoin="round" />
-          </svg>
-          <svg class="sun" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="4.2" stroke="#6666ff" stroke-width="1.6" />
-            <path
-              d="M12 2.5v3M12 18.5v3M21.5 12h-3M5.5 12h-3M18.5 5.5l-2.1 2.1M7.6 16.4l-2.1 2.1M18.5 18.5l-2.1-2.1M7.6 7.6 5.5 5.5"
-              stroke="#6666ff" stroke-width="1.6" stroke-linecap="round" />
-          </svg>
-        </button>
         <div class="nav-auth" id="navAuth"><a href="login.html" class="nav-account-link">Log in</a></div>
         <a href="contact.html" class="nav-cta">Start a project</a>
         <button type="button" class="menu-btn" id="menuBtn" aria-label="Open menu">
@@ -192,7 +173,6 @@
   </footer>
 
   <script src="js/nav.js"></script>
-  <script src="js/theme.js"></script>
   <script src="js/reveal.js"></script>
   <script src="js/tilt.js"></script>
 <script src="js/interact.js"></script>

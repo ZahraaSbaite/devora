@@ -85,12 +85,6 @@ main h2{line-height:1.1;}
     0 30px 60px -20px rgba(102,102,255,0.35),
     0 18px 36px -18px rgba(0,0,0,0.5);
 }
-[data-theme="light"] .tilt-card:hover{
-  box-shadow:
-    0 0 0 1px rgba(85,82,201,0.14),
-    0 30px 60px -24px rgba(85,82,201,0.30),
-    0 18px 36px -20px rgba(20,30,70,0.18);
-}
 .service-icon, .why-icon, .tech-glyph, .timeline-dot, .team-avatar{
   transition:transform .35s var(--ease), box-shadow .35s ease;
 }
@@ -105,11 +99,6 @@ main h2{line-height:1.1;}
 .services-grid:has(> .service-card){grid-template-columns:repeat(4, 1fr);}
 @media (max-width:1100px){ .services-grid:has(> .service-card){grid-template-columns:repeat(2, 1fr);} }
 @media (max-width:640px){ .services-grid:has(> .service-card){grid-template-columns:1fr;} }
-
-/* icon strokes are pale brand tints that vanish on cream: ink them in light mode */
-[data-theme="light"] .service-icon{background:rgba(85,82,201,0.10); border-color:rgba(85,82,201,0.22);}
-[data-theme="light"] .service-icon svg [stroke]{stroke:var(--peri-ink);}
-[data-theme="light"] .service-icon svg [fill]:not([fill="none"]){fill:var(--peri-ink);}
 
 /* numbered "why" cards */
 .why-icon{

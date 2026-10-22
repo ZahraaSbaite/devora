@@ -84,12 +84,6 @@
   --extrude-3:#2a2a85;
   --extrude-shadow:.45;
 }
-[data-theme="light"]{
-  --extrude-1:#8f8cf0;
-  --extrude-2:#6f6bdc;
-  --extrude-3:#5552c9;
-  --extrude-shadow:.12;
-}
 
 /* entrance: letters rise in one after another */
 .hero-word span{animation:letter-in .9s var(--ease) backwards; animation-delay:calc(var(--i, 0) * 70ms);}

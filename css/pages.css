@@ -296,7 +296,6 @@
   cursor:grab;
   overflow:hidden;
 }
-[data-theme="light"] .badge{box-shadow:0 40px 70px -34px rgba(20,30,70,0.35);}
 .badge-clip{
   position:absolute;
   top:12px; left:50%;
@@ -384,9 +383,4 @@
   .principles{grid-template-columns:1fr;}
   .principle{min-height:0;}
   .name-op{width:100%; text-align:center;}
-}
-[data-theme="light"] .principle b{
-  background:linear-gradient(90deg, var(--slate), var(--peri-ink), var(--columbia-ink), var(--celadon-ink));
-  -webkit-background-clip:text;
-  background-clip:text;
 }

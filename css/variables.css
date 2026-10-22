@@ -47,27 +47,3 @@
   color-scheme: dark;
 }
 
-[data-theme="light"]{
-  /* pale Columbia Blue paper with Rich Black ink */
-  --bg:#f6faff;
-  --bg-2:#ecf4ff;
-  --surface-1:#ffffff;
-  --surface-2:#eef5ff;
-  --surface-glass: rgba(255,255,255,0.72);
-  --hairline:#d9e6f7;
-  --hairline-soft: rgba(12,12,22,0.06);
-  --text-hi:#0c0c16;
-  --text-lo:#4f5470;
-  --text-faint:#8a90ab;
-  --chip-bg:#0c0c16;
-  --chip-text:#f6faff;
-  --glow-a:0.16;
-  --glow-b:0.09;
-  --peri-ink:#5552c9;
-  --columbia-ink:#1f7fab;
-  --celadon-ink:#0f8f66;
-  --grid-line: rgba(12,12,22,0.04);
-  --shadow-soft: 0 20px 60px rgba(20,30,70,0.08);
-  --shadow-glow: 0 0 0 1px rgba(85,82,201,0.10), 0 20px 50px rgba(102,102,255,0.12);
-  color-scheme: light;
-}
