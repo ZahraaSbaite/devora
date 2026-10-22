@@ -10,10 +10,10 @@
 // config secret.
 // ---------------------------------------------------------------------------
 export const FIREBASE_CONFIG = {
-  apiKey: "YOUR-API-KEY",
-  authDomain: "YOUR-PROJECT-ID.firebaseapp.com",
-  projectId: "YOUR-PROJECT-ID",
-  appId: "YOUR-APP-ID"
+  apiKey: "AIzaSyDkHaltSg1uFZum3damjVcF4F5zAbESt8A",
+  authDomain: "devora-2fcfa.firebaseapp.com",
+  projectId: "devora-2fcfa",
+  appId: "1:644463430173:web:b8f92a1b469172be87d4f4"
 };
 
 // True once someone has swapped in real project values above.
