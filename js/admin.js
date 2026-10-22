@@ -287,7 +287,7 @@ function exportOrders(){
   const cell = value => {
     let text = String(value == null ? '' : value);
     // stop a spreadsheet treating a submitted value as a formula
-    if(/^[=+\-@]/.test(text)) text = "'" + text;
+    if(/^[=+\-@\t\r]/.test(text)) text = "'" + text;
     return `"${text.replace(/"/g, '""')}"`;
   };
   const rows = [columns.map(([, label]) => cell(label)).join(',')];
